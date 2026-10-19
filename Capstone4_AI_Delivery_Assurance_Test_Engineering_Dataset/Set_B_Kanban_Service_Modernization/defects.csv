@@ -1,0 +1,21 @@
+Bug ID,Related Card,Severity,State,Summary
+KBUG-001,KB-004,S2,In Progress,Observed defect 1 during validation
+KBUG-002,KB-007,S2,Closed,Observed defect 2 during validation
+KBUG-003,KB-010,S2,Open,Observed defect 3 during validation
+KBUG-004,KB-013,S2,In Progress,Observed defect 4 during validation
+KBUG-005,KB-016,S2,Closed,Observed defect 5 during validation
+KBUG-006,KB-019,S2,Open,Observed defect 6 during validation
+KBUG-007,KB-022,S1,In Progress,Observed defect 7 during validation
+KBUG-008,KB-025,S2,Closed,Observed defect 8 during validation
+KBUG-009,KB-028,S2,Open,Observed defect 9 during validation
+KBUG-010,KB-031,S2,In Progress,Observed defect 10 during validation
+KBUG-011,KB-034,S2,Closed,Observed defect 11 during validation
+KBUG-012,KB-037,S2,Open,Observed defect 12 during validation
+KBUG-013,KB-040,S2,In Progress,Observed defect 13 during validation
+KBUG-014,KB-043,S1,Closed,Observed defect 14 during validation
+KBUG-015,KB-046,S2,Open,Observed defect 15 during validation
+KBUG-016,KB-049,S2,In Progress,Observed defect 16 during validation
+KBUG-017,KB-052,S2,Closed,Observed defect 17 during validation
+KBUG-018,KB-055,S2,Open,Observed defect 18 during validation
+KBUG-019,KB-058,S2,In Progress,Observed defect 19 during validation
+KBUG-020,KB-001,S2,Closed,Observed defect 20 during validation

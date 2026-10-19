@@ -1,0 +1,8 @@
+{
+  "orderId": "ORD-874123",
+  "amount": 149.9,
+  "currency": "USD",
+  "paymentMethodToken": "tok_test_8821",
+  "customerId": "CUS-10483",
+  "idempotencyKey": "idem-ORD-874123-01"
+}

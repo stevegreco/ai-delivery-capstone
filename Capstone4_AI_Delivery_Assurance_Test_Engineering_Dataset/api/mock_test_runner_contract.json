@@ -1,0 +1,57 @@
+{
+  "service": "Mock Enterprise Test Runner",
+  "version": "1.0",
+  "tools": [
+    {
+      "name": "get_test_case",
+      "risk": "READ",
+      "parameters": [
+        "test_case_id"
+      ]
+    },
+    {
+      "name": "get_requirement_trace",
+      "risk": "READ",
+      "parameters": [
+        "requirement_id"
+      ]
+    },
+    {
+      "name": "run_test_case",
+      "risk": "WRITE_LOW",
+      "parameters": [
+        "test_case_id",
+        "environment",
+        "build_id"
+      ],
+      "requires_confirmation": false
+    },
+    {
+      "name": "run_test_suite",
+      "risk": "WRITE_MEDIUM",
+      "parameters": [
+        "suite_id",
+        "environment",
+        "build_id"
+      ],
+      "requires_confirmation": true
+    },
+    {
+      "name": "get_execution_result",
+      "risk": "READ",
+      "parameters": [
+        "execution_id"
+      ]
+    },
+    {
+      "name": "create_defect_draft",
+      "risk": "WRITE_MEDIUM",
+      "parameters": [
+        "execution_id",
+        "summary"
+      ],
+      "requires_confirmation": true
+    }
+  ],
+  "note": "The AI application may propose or invoke approved testing actions, but release decisions remain governed by deterministic policy and human accountability."
+}

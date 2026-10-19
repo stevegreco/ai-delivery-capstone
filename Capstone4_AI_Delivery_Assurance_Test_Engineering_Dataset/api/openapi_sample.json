@@ -1,0 +1,279 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Northstar Commerce Delivery Assurance Sample API",
+    "version": "2.0"
+  },
+  "paths": {
+    "/api/v2/cart/validate": {
+      "post": {
+        "summary": "Validate cart before checkout",
+        "operationId": "api_001",
+        "responses": {
+          "200": {
+            "description": "Representative response"
+          },
+          "400": {
+            "description": "Representative response"
+          },
+          "409": {
+            "description": "Representative response"
+          },
+          "503": {
+            "description": "Representative response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v2/checkout/submit": {
+      "post": {
+        "summary": "Submit checkout transaction",
+        "operationId": "api_002",
+        "responses": {
+          "201": {
+            "description": "Representative response"
+          },
+          "400": {
+            "description": "Representative response"
+          },
+          "409": {
+            "description": "Representative response"
+          },
+          "422": {
+            "description": "Representative response"
+          },
+          "503": {
+            "description": "Representative response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v2/payments/authorize": {
+      "post": {
+        "summary": "Authorize payment",
+        "operationId": "api_003",
+        "responses": {
+          "200": {
+            "description": "Representative response"
+          },
+          "202": {
+            "description": "Representative response"
+          },
+          "400": {
+            "description": "Representative response"
+          },
+          "402": {
+            "description": "Representative response"
+          },
+          "409": {
+            "description": "Representative response"
+          },
+          "503": {
+            "description": "Representative response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v2/payments/{id}": {
+      "get": {
+        "summary": "Get payment state",
+        "operationId": "api_004",
+        "responses": {
+          "200": {
+            "description": "Representative response"
+          },
+          "404": {
+            "description": "Representative response"
+          }
+        }
+      }
+    },
+    "/api/v2/refunds": {
+      "post": {
+        "summary": "Create refund",
+        "operationId": "api_005",
+        "responses": {
+          "201": {
+            "description": "Representative response"
+          },
+          "202": {
+            "description": "Representative response"
+          },
+          "400": {
+            "description": "Representative response"
+          },
+          "409": {
+            "description": "Representative response"
+          },
+          "422": {
+            "description": "Representative response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v2/refunds/{id}": {
+      "get": {
+        "summary": "Get refund state",
+        "operationId": "api_006",
+        "responses": {
+          "200": {
+            "description": "Representative response"
+          },
+          "404": {
+            "description": "Representative response"
+          }
+        }
+      }
+    },
+    "/api/v2/auth/token": {
+      "post": {
+        "summary": "Issue access token",
+        "operationId": "api_007",
+        "responses": {
+          "200": {
+            "description": "Representative response"
+          },
+          "400": {
+            "description": "Representative response"
+          },
+          "401": {
+            "description": "Representative response"
+          },
+          "429": {
+            "description": "Representative response"
+          }
+        }
+      }
+    },
+    "/api/v2/auth/step-up": {
+      "post": {
+        "summary": "Perform step-up authentication",
+        "operationId": "api_008",
+        "responses": {
+          "200": {
+            "description": "Representative response"
+          },
+          "400": {
+            "description": "Representative response"
+          },
+          "401": {
+            "description": "Representative response"
+          },
+          "423": {
+            "description": "Representative response"
+          }
+        }
+      }
+    },
+    "/api/v2/orders": {
+      "post": {
+        "summary": "Create order",
+        "operationId": "api_009",
+        "responses": {
+          "201": {
+            "description": "Representative response"
+          },
+          "400": {
+            "description": "Representative response"
+          },
+          "409": {
+            "description": "Representative response"
+          },
+          "422": {
+            "description": "Representative response"
+          },
+          "503": {
+            "description": "Representative response"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v2/orders/{id}": {
+      "get": {
+        "summary": "Get order state",
+        "operationId": "api_010",
+        "responses": {
+          "200": {
+            "description": "Representative response"
+          },
+          "404": {
+            "description": "Representative response"
+          }
+        }
+      }
+    },
+    "/api/v2/notifications": {
+      "post": {
+        "summary": "Submit notification",
+        "operationId": "api_011",
+        "responses": {
+          "202": {
+            "description": "Representative response"
+          },
+          "400": {
+            "description": "Representative response"
+          },
+          "409": {
+            "description": "Representative response"
+          },
+          "429": {
+            "description": "Representative response"
+          },
+          "503": {
+            "description": "Representative response"
+          }
+        }
+      }
+    }
+  }
+}

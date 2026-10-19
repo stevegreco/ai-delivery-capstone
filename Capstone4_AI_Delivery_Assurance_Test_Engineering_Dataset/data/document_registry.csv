@@ -1,0 +1,9 @@
+document_id,file_name,document_type,domain,version,status,effective_date,classification
+DOC-01,01_Commerce_Platform_Product_Requirements.pdf,PRODUCT_REQUIREMENTS,"checkout,orders,notifications",3.2,CURRENT,2026-09-15,INTERNAL
+DOC-02,02_Payments_Refunds_Functional_Specification.pdf,FUNCTIONAL_SPEC,"payments,refunds",4.1,CURRENT,2026-09-20,INTERNAL
+DOC-03,03_Identity_Access_API_and_Security_Specification.pdf,API_SECURITY_SPEC,identity,2.7,CURRENT,2026-09-18,CONFIDENTIAL
+DOC-04,04_Checkout_UI_and_Acceptance_Standards.pdf,UX_ACCEPTANCE_STANDARD,checkout,2.4,CURRENT,2026-08-30,INTERNAL
+DOC-05,05_Release_Governance_and_Test_Strategy.pdf,DELIVERY_GOVERNANCE,all,5.0,CURRENT,2026-09-25,INTERNAL
+DOC-06,06_Non_Functional_Requirements_and_SLOs.pdf,NFR_SLO,"platform,all",3.0,CURRENT,2026-09-22,INTERNAL
+DOC-07,07_Change_Request_and_Release_Impact_Bundle.pdf,CHANGE_BUNDLE,all,1.6,CURRENT,2026-10-01,INTERNAL
+DOC-98,98_ARCHIVED_Checkout_Requirements_v1.pdf,PRODUCT_REQUIREMENTS,checkout,1.0,ARCHIVED,2025-11-01,INTERNAL

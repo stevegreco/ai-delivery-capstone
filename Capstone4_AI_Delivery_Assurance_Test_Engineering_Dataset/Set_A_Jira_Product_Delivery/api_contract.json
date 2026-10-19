@@ -1,0 +1,38 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Commerce Checkout API",
+    "version": "2.4"
+  },
+  "paths": {
+    "/checkout": {
+      "post": {
+        "summary": "Create checkout",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "409": {
+            "description": "Duplicate request"
+          }
+        }
+      }
+    },
+    "/refunds/{orderId}": {
+      "post": {
+        "summary": "Request refund",
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "403": {
+            "description": "Not eligible"
+          }
+        }
+      }
+    }
+  }
+}

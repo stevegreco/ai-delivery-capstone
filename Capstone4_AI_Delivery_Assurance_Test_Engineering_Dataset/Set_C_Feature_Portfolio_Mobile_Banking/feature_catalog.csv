@@ -1,0 +1,6 @@
+Feature Code,Capability,Outcome,Release Train,Business Priority,Lifecycle
+MBF-01,Card Controls,Customers can freeze/unfreeze cards,Train-7,P0,Committed
+MBF-02,Travel Notice,Customers declare upcoming travel,Train-7,P1,Committed
+MBF-03,Spending Insights,Customers see categorized spend trends,Train-8,P2,Planned
+MBF-04,Secure Messages,Customers exchange secure messages,Train-7,P0,Committed
+MBF-05,Biometric Step-Up,High-risk actions require stronger verification,Train-7,P0,Committed

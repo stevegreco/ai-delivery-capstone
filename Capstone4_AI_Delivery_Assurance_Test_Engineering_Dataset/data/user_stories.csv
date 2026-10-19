@@ -1,0 +1,111 @@
+story_id,requirement_id,epic_id,story,sprint,story_points,status
+US-001,REQ-001,EPIC-01,"As a operations engineer, I want guest checkout identity capture - scenario 1 so that the service behaves consistently and can be verified before release.",S46,8,DONE
+US-002,REQ-002,EPIC-01,"As a release manager, I want guest checkout identity capture - scenario 2 so that the service behaves consistently and can be verified before release.",S47,5,DONE
+US-003,REQ-003,EPIC-01,"As a customer, I want persist cart across sessions - scenario 3 so that the service behaves consistently and can be verified before release.",S47,5,DONE
+US-004,REQ-004,EPIC-01,"As a customer, I want guest checkout identity capture - scenario 4 so that the service behaves consistently and can be verified before release.",S43,8,DONE
+US-005,REQ-005,EPIC-01,"As a support analyst, I want persist cart across sessions - scenario 5 so that the service behaves consistently and can be verified before release.",S42,3,IN_TEST
+US-006,REQ-006,EPIC-01,"As a release manager, I want validate cart before payment - scenario 6 so that the service behaves consistently and can be verified before release.",S47,2,DONE
+US-007,REQ-007,EPIC-01,"As a operations engineer, I want validate cart before payment - scenario 7 so that the service behaves consistently and can be verified before release.",S46,5,READY
+US-008,REQ-008,EPIC-01,"As a customer, I want guest checkout identity capture - scenario 8 so that the service behaves consistently and can be verified before release.",S43,5,READY
+US-009,REQ-009,EPIC-01,"As a release manager, I want guest checkout identity capture - scenario 9 so that the service behaves consistently and can be verified before release.",S45,3,DONE
+US-010,REQ-010,EPIC-01,"As a customer, I want calculate shipping options - scenario 10 so that the service behaves consistently and can be verified before release.",S43,8,READY
+US-011,REQ-011,EPIC-01,"As a security analyst, I want persist cart across sessions - scenario 11 so that the service behaves consistently and can be verified before release.",S42,5,IN_TEST
+US-012,REQ-012,EPIC-01,"As a operations engineer, I want prevent stale inventory checkout - scenario 12 so that the service behaves consistently and can be verified before release.",S44,5,READY
+US-013,REQ-013,EPIC-01,"As a support analyst, I want prevent stale inventory checkout - scenario 13 so that the service behaves consistently and can be verified before release.",S42,3,DONE
+US-014,REQ-014,EPIC-01,"As a operations engineer, I want apply promotion eligibility - scenario 14 so that the service behaves consistently and can be verified before release.",S43,8,DONE
+US-015,REQ-015,EPIC-01,"As a release manager, I want persist cart across sessions - scenario 15 so that the service behaves consistently and can be verified before release.",S46,2,IN_TEST
+US-016,REQ-016,EPIC-01,"As a release manager, I want persist cart across sessions - scenario 16 so that the service behaves consistently and can be verified before release.",S43,3,IN_TEST
+US-017,REQ-017,EPIC-01,"As a security analyst, I want persist cart across sessions - scenario 17 so that the service behaves consistently and can be verified before release.",S44,2,DONE
+US-018,REQ-018,EPIC-01,"As a support analyst, I want persist cart across sessions - scenario 18 so that the service behaves consistently and can be verified before release.",S44,8,DONE
+US-019,REQ-019,EPIC-01,"As a release manager, I want calculate shipping options - scenario 19 so that the service behaves consistently and can be verified before release.",S46,8,DONE
+US-020,REQ-020,EPIC-01,"As a security analyst, I want guest checkout identity capture - scenario 20 so that the service behaves consistently and can be verified before release.",S42,2,IN_TEST
+US-021,REQ-021,EPIC-02,"As a operations engineer, I want prevent duplicate charge - scenario 1 so that the service behaves consistently and can be verified before release.",S48,8,READY
+US-022,REQ-022,EPIC-02,"As a security analyst, I want capture payment after order validation - scenario 2 so that the service behaves consistently and can be verified before release.",S42,3,IN_TEST
+US-023,REQ-023,EPIC-02,"As a customer, I want capture payment after order validation - scenario 3 so that the service behaves consistently and can be verified before release.",S48,8,IN_TEST
+US-024,REQ-024,EPIC-02,"As a support analyst, I want authorize payment transaction - scenario 4 so that the service behaves consistently and can be verified before release.",S43,3,READY
+US-025,REQ-025,EPIC-02,"As a security analyst, I want handle payment timeout safely - scenario 5 so that the service behaves consistently and can be verified before release.",S41,2,DONE
+US-026,REQ-026,EPIC-02,"As a release manager, I want authorize payment transaction - scenario 6 so that the service behaves consistently and can be verified before release.",S43,3,IN_TEST
+US-027,REQ-027,EPIC-02,"As a support analyst, I want handle payment timeout safely - scenario 7 so that the service behaves consistently and can be verified before release.",S46,5,DONE
+US-028,REQ-028,EPIC-02,"As a release manager, I want return stable payment status - scenario 8 so that the service behaves consistently and can be verified before release.",S44,5,DONE
+US-029,REQ-029,EPIC-02,"As a release manager, I want support partial authorization - scenario 9 so that the service behaves consistently and can be verified before release.",S42,3,DONE
+US-030,REQ-030,EPIC-02,"As a support analyst, I want authorize payment transaction - scenario 10 so that the service behaves consistently and can be verified before release.",S46,2,DONE
+US-031,REQ-031,EPIC-02,"As a customer, I want return stable payment status - scenario 11 so that the service behaves consistently and can be verified before release.",S41,5,DONE
+US-032,REQ-032,EPIC-02,"As a security analyst, I want handle payment timeout safely - scenario 12 so that the service behaves consistently and can be verified before release.",S47,2,READY
+US-033,REQ-033,EPIC-02,"As a security analyst, I want capture payment after order validation - scenario 13 so that the service behaves consistently and can be verified before release.",S45,5,READY
+US-034,REQ-034,EPIC-02,"As a support analyst, I want authorize payment transaction - scenario 14 so that the service behaves consistently and can be verified before release.",S47,5,READY
+US-035,REQ-035,EPIC-02,"As a customer, I want authorize payment transaction - scenario 15 so that the service behaves consistently and can be verified before release.",S41,3,READY
+US-036,REQ-036,EPIC-02,"As a operations engineer, I want handle payment timeout safely - scenario 16 so that the service behaves consistently and can be verified before release.",S48,8,DONE
+US-037,REQ-037,EPIC-02,"As a release manager, I want handle payment timeout safely - scenario 17 so that the service behaves consistently and can be verified before release.",S43,5,IN_TEST
+US-038,REQ-038,EPIC-02,"As a release manager, I want authorize payment transaction - scenario 18 so that the service behaves consistently and can be verified before release.",S47,3,IN_TEST
+US-039,REQ-039,EPIC-02,"As a security analyst, I want support partial authorization - scenario 19 so that the service behaves consistently and can be verified before release.",S42,5,DONE
+US-040,REQ-040,EPIC-02,"As a operations engineer, I want support partial authorization - scenario 20 so that the service behaves consistently and can be verified before release.",S42,5,READY
+US-041,REQ-041,EPIC-03,"As a support analyst, I want notify customer of refund state - scenario 1 so that the service behaves consistently and can be verified before release.",S43,2,DONE
+US-042,REQ-042,EPIC-03,"As a release manager, I want prevent duplicate refund - scenario 2 so that the service behaves consistently and can be verified before release.",S47,8,DONE
+US-043,REQ-043,EPIC-03,"As a support analyst, I want issue partial refund - scenario 3 so that the service behaves consistently and can be verified before release.",S46,5,DONE
+US-044,REQ-044,EPIC-03,"As a support analyst, I want prevent duplicate refund - scenario 4 so that the service behaves consistently and can be verified before release.",S48,8,READY
+US-045,REQ-045,EPIC-03,"As a release manager, I want prevent duplicate refund - scenario 5 so that the service behaves consistently and can be verified before release.",S48,2,DONE
+US-046,REQ-046,EPIC-03,"As a operations engineer, I want handle asynchronous refund completion - scenario 6 so that the service behaves consistently and can be verified before release.",S48,3,DONE
+US-047,REQ-047,EPIC-03,"As a security analyst, I want validate refund eligibility - scenario 7 so that the service behaves consistently and can be verified before release.",S46,2,DONE
+US-048,REQ-048,EPIC-03,"As a release manager, I want record refund reason - scenario 8 so that the service behaves consistently and can be verified before release.",S48,8,IN_TEST
+US-049,REQ-049,EPIC-03,"As a security analyst, I want handle asynchronous refund completion - scenario 9 so that the service behaves consistently and can be verified before release.",S41,2,READY
+US-050,REQ-050,EPIC-03,"As a support analyst, I want validate refund eligibility - scenario 10 so that the service behaves consistently and can be verified before release.",S45,5,READY
+US-051,REQ-051,EPIC-03,"As a release manager, I want notify customer of refund state - scenario 11 so that the service behaves consistently and can be verified before release.",S41,8,DONE
+US-052,REQ-052,EPIC-03,"As a security analyst, I want validate refund eligibility - scenario 12 so that the service behaves consistently and can be verified before release.",S44,5,IN_TEST
+US-053,REQ-053,EPIC-03,"As a customer, I want prevent duplicate refund - scenario 13 so that the service behaves consistently and can be verified before release.",S47,8,IN_TEST
+US-054,REQ-054,EPIC-03,"As a security analyst, I want notify customer of refund state - scenario 14 so that the service behaves consistently and can be verified before release.",S42,3,DONE
+US-055,REQ-055,EPIC-03,"As a operations engineer, I want record refund reason - scenario 15 so that the service behaves consistently and can be verified before release.",S46,5,IN_TEST
+US-056,REQ-056,EPIC-04,"As a support analyst, I want require step-up verification - scenario 1 so that the service behaves consistently and can be verified before release.",S44,8,DONE
+US-057,REQ-057,EPIC-04,"As a customer, I want authenticate customer - scenario 2 so that the service behaves consistently and can be verified before release.",S41,3,IN_TEST
+US-058,REQ-058,EPIC-04,"As a operations engineer, I want refresh expired session - scenario 3 so that the service behaves consistently and can be verified before release.",S48,3,DONE
+US-059,REQ-059,EPIC-04,"As a release manager, I want protect privileged admin action - scenario 4 so that the service behaves consistently and can be verified before release.",S46,3,READY
+US-060,REQ-060,EPIC-04,"As a security analyst, I want revoke compromised token - scenario 5 so that the service behaves consistently and can be verified before release.",S45,5,READY
+US-061,REQ-061,EPIC-04,"As a security analyst, I want require step-up verification - scenario 6 so that the service behaves consistently and can be verified before release.",S45,8,DONE
+US-062,REQ-062,EPIC-04,"As a release manager, I want require step-up verification - scenario 7 so that the service behaves consistently and can be verified before release.",S46,2,READY
+US-063,REQ-063,EPIC-04,"As a security analyst, I want refresh expired session - scenario 8 so that the service behaves consistently and can be verified before release.",S45,2,READY
+US-064,REQ-064,EPIC-04,"As a release manager, I want require step-up verification - scenario 9 so that the service behaves consistently and can be verified before release.",S44,2,READY
+US-065,REQ-065,EPIC-04,"As a support analyst, I want rate-limit failed login - scenario 10 so that the service behaves consistently and can be verified before release.",S47,3,DONE
+US-066,REQ-066,EPIC-04,"As a customer, I want rate-limit failed login - scenario 11 so that the service behaves consistently and can be verified before release.",S42,3,DONE
+US-067,REQ-067,EPIC-04,"As a operations engineer, I want authenticate customer - scenario 12 so that the service behaves consistently and can be verified before release.",S46,8,DONE
+US-068,REQ-068,EPIC-04,"As a operations engineer, I want refresh expired session - scenario 13 so that the service behaves consistently and can be verified before release.",S44,8,READY
+US-069,REQ-069,EPIC-04,"As a customer, I want authenticate customer - scenario 14 so that the service behaves consistently and can be verified before release.",S43,3,IN_TEST
+US-070,REQ-070,EPIC-04,"As a operations engineer, I want protect privileged admin action - scenario 15 so that the service behaves consistently and can be verified before release.",S47,5,DONE
+US-071,REQ-071,EPIC-04,"As a operations engineer, I want rate-limit failed login - scenario 16 so that the service behaves consistently and can be verified before release.",S46,5,IN_TEST
+US-072,REQ-072,EPIC-04,"As a security analyst, I want refresh expired session - scenario 17 so that the service behaves consistently and can be verified before release.",S48,3,DONE
+US-073,REQ-073,EPIC-04,"As a release manager, I want refresh expired session - scenario 18 so that the service behaves consistently and can be verified before release.",S45,3,IN_TEST
+US-074,REQ-074,EPIC-04,"As a release manager, I want revoke compromised token - scenario 19 so that the service behaves consistently and can be verified before release.",S44,8,IN_TEST
+US-075,REQ-075,EPIC-04,"As a operations engineer, I want require step-up verification - scenario 20 so that the service behaves consistently and can be verified before release.",S46,5,IN_TEST
+US-076,REQ-076,EPIC-05,"As a customer, I want prevent duplicate order creation - scenario 1 so that the service behaves consistently and can be verified before release.",S47,8,IN_TEST
+US-077,REQ-077,EPIC-05,"As a support analyst, I want reserve inventory - scenario 2 so that the service behaves consistently and can be verified before release.",S45,2,IN_TEST
+US-078,REQ-078,EPIC-05,"As a customer, I want cancel eligible order - scenario 3 so that the service behaves consistently and can be verified before release.",S46,8,IN_TEST
+US-079,REQ-079,EPIC-05,"As a operations engineer, I want cancel eligible order - scenario 4 so that the service behaves consistently and can be verified before release.",S44,3,IN_TEST
+US-080,REQ-080,EPIC-05,"As a security analyst, I want reserve inventory - scenario 5 so that the service behaves consistently and can be verified before release.",S45,3,DONE
+US-081,REQ-081,EPIC-05,"As a security analyst, I want create order atomically - scenario 6 so that the service behaves consistently and can be verified before release.",S44,3,DONE
+US-082,REQ-082,EPIC-05,"As a security analyst, I want prevent duplicate order creation - scenario 7 so that the service behaves consistently and can be verified before release.",S44,3,DONE
+US-083,REQ-083,EPIC-05,"As a customer, I want prevent duplicate order creation - scenario 8 so that the service behaves consistently and can be verified before release.",S47,5,READY
+US-084,REQ-084,EPIC-05,"As a customer, I want cancel eligible order - scenario 9 so that the service behaves consistently and can be verified before release.",S43,2,DONE
+US-085,REQ-085,EPIC-05,"As a operations engineer, I want reserve inventory - scenario 10 so that the service behaves consistently and can be verified before release.",S48,8,DONE
+US-086,REQ-086,EPIC-05,"As a release manager, I want expose order status - scenario 11 so that the service behaves consistently and can be verified before release.",S46,5,DONE
+US-087,REQ-087,EPIC-05,"As a customer, I want reserve inventory - scenario 12 so that the service behaves consistently and can be verified before release.",S44,2,DONE
+US-088,REQ-088,EPIC-05,"As a operations engineer, I want cancel eligible order - scenario 13 so that the service behaves consistently and can be verified before release.",S43,2,READY
+US-089,REQ-089,EPIC-05,"As a operations engineer, I want record order status history - scenario 14 so that the service behaves consistently and can be verified before release.",S43,5,DONE
+US-090,REQ-090,EPIC-05,"As a customer, I want expose order status - scenario 15 so that the service behaves consistently and can be verified before release.",S45,2,IN_TEST
+US-091,REQ-091,EPIC-06,"As a release manager, I want honor notification preference - scenario 1 so that the service behaves consistently and can be verified before release.",S48,8,DONE
+US-092,REQ-092,EPIC-06,"As a security analyst, I want send order confirmation - scenario 2 so that the service behaves consistently and can be verified before release.",S48,5,DONE
+US-093,REQ-093,EPIC-06,"As a customer, I want send payment failure notice - scenario 3 so that the service behaves consistently and can be verified before release.",S46,3,READY
+US-094,REQ-094,EPIC-06,"As a release manager, I want send order confirmation - scenario 4 so that the service behaves consistently and can be verified before release.",S43,2,IN_TEST
+US-095,REQ-095,EPIC-06,"As a release manager, I want suppress duplicate notifications - scenario 5 so that the service behaves consistently and can be verified before release.",S44,3,READY
+US-096,REQ-096,EPIC-06,"As a operations engineer, I want suppress duplicate notifications - scenario 6 so that the service behaves consistently and can be verified before release.",S46,2,READY
+US-097,REQ-097,EPIC-06,"As a customer, I want honor notification preference - scenario 7 so that the service behaves consistently and can be verified before release.",S43,3,READY
+US-098,REQ-098,EPIC-06,"As a release manager, I want send payment failure notice - scenario 8 so that the service behaves consistently and can be verified before release.",S44,2,IN_TEST
+US-099,REQ-099,EPIC-06,"As a operations engineer, I want record delivery status - scenario 9 so that the service behaves consistently and can be verified before release.",S44,8,IN_TEST
+US-100,REQ-100,EPIC-06,"As a release manager, I want send payment failure notice - scenario 10 so that the service behaves consistently and can be verified before release.",S45,2,IN_TEST
+US-101,REQ-101,EPIC-06,"As a release manager, I want honor notification preference - scenario 11 so that the service behaves consistently and can be verified before release.",S44,2,DONE
+US-102,REQ-102,EPIC-06,"As a operations engineer, I want send order confirmation - scenario 12 so that the service behaves consistently and can be verified before release.",S45,3,READY
+US-103,REQ-103,EPIC-06,"As a security analyst, I want record delivery status - scenario 13 so that the service behaves consistently and can be verified before release.",S45,2,IN_TEST
+US-104,REQ-104,EPIC-06,"As a release manager, I want record delivery status - scenario 14 so that the service behaves consistently and can be verified before release.",S44,3,DONE
+US-105,REQ-105,EPIC-06,"As a operations engineer, I want retry transient delivery failure - scenario 15 so that the service behaves consistently and can be verified before release.",S43,8,IN_TEST
+US-106,REQ-106,EPIC-07,"As a operations engineer, I want recover from dependency timeout - scenario 1 so that the service behaves consistently and can be verified before release.",S48,3,DONE
+US-107,REQ-107,EPIC-07,"As a security analyst, I want degrade safely during outage - scenario 2 so that the service behaves consistently and can be verified before release.",S42,8,IN_TEST
+US-108,REQ-108,EPIC-07,"As a customer, I want recover from dependency timeout - scenario 3 so that the service behaves consistently and can be verified before release.",S42,2,DONE
+US-109,REQ-109,EPIC-07,"As a security analyst, I want support horizontal scale - scenario 4 so that the service behaves consistently and can be verified before release.",S43,3,IN_TEST
+US-110,REQ-110,EPIC-07,"As a security analyst, I want degrade safely during outage - scenario 5 so that the service behaves consistently and can be verified before release.",S48,2,DONE

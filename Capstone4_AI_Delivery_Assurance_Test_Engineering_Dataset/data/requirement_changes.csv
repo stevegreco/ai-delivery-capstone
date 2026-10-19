@@ -1,0 +1,46 @@
+change_id,requirement_id,change_type,change_description,requested_date,target_release,status,requestor
+CR-001,REQ-007,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-09-16,R27.01,APPROVED,Product
+CR-002,REQ-079,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-10-05,R27.01,PROPOSED,Product
+CR-003,REQ-087,SCOPE_CHANGE,Expand supported business scenario to an additional customer segment.,2026-09-22,R26.11,APPROVED,Product
+CR-004,REQ-055,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-09-30,R26.11,IMPLEMENTING,Compliance
+CR-005,REQ-060,SCOPE_CHANGE,Expand supported business scenario to an additional customer segment.,2026-09-03,R26.11,APPROVED,Product
+CR-006,REQ-121,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-09-03,R26.11,IMPLEMENTING,Security
+CR-007,REQ-004,RULE_CHANGE,Modify business decision rule and expected rejection behavior.,2026-10-11,R26.11,APPROVED,Product
+CR-008,REQ-117,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-09-11,R26.11,PROPOSED,Product
+CR-009,REQ-128,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-10-10,R26.11,PROPOSED,Security
+CR-010,REQ-110,API_CHANGE,Change request or response contract and add a new mandatory field.,2026-10-14,R27.01,APPROVED,Product
+CR-011,REQ-036,API_CHANGE,Change request or response contract and add a new mandatory field.,2026-09-14,R26.11,IMPLEMENTING,Security
+CR-012,REQ-086,SCOPE_CHANGE,Expand supported business scenario to an additional customer segment.,2026-09-08,R27.01,PROPOSED,Operations
+CR-013,REQ-044,API_CHANGE,Change request or response contract and add a new mandatory field.,2026-10-06,R26.11,APPROVED,Security
+CR-014,REQ-011,RULE_CHANGE,Modify business decision rule and expected rejection behavior.,2026-09-07,R27.01,PROPOSED,Product
+CR-015,REQ-125,SCOPE_CHANGE,Expand supported business scenario to an additional customer segment.,2026-09-01,R26.11,PROPOSED,Product
+CR-016,REQ-073,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-10-15,R27.01,IMPLEMENTING,Security
+CR-017,REQ-053,RULE_CHANGE,Modify business decision rule and expected rejection behavior.,2026-10-11,R27.01,IMPLEMENTING,Operations
+CR-018,REQ-106,RULE_CHANGE,Modify business decision rule and expected rejection behavior.,2026-09-12,R26.11,IMPLEMENTING,Security
+CR-019,REQ-128,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-09-06,R27.01,APPROVED,Operations
+CR-020,REQ-002,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-09-16,R26.11,PROPOSED,Compliance
+CR-021,REQ-025,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-09-24,R26.11,APPROVED,Security
+CR-022,REQ-071,SCOPE_CHANGE,Expand supported business scenario to an additional customer segment.,2026-09-13,R26.11,PROPOSED,Operations
+CR-023,REQ-128,RULE_CHANGE,Modify business decision rule and expected rejection behavior.,2026-09-11,R26.11,PROPOSED,Architecture
+CR-024,REQ-073,RULE_CHANGE,Modify business decision rule and expected rejection behavior.,2026-09-28,R27.01,APPROVED,Compliance
+CR-025,REQ-117,SCOPE_CHANGE,Expand supported business scenario to an additional customer segment.,2026-09-07,R26.11,IMPLEMENTING,Security
+CR-026,REQ-041,SCOPE_CHANGE,Expand supported business scenario to an additional customer segment.,2026-10-02,R26.11,PROPOSED,Security
+CR-027,REQ-114,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-10-08,R27.01,APPROVED,Security
+CR-028,REQ-084,RULE_CHANGE,Modify business decision rule and expected rejection behavior.,2026-09-08,R27.01,PROPOSED,Product
+CR-029,REQ-061,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-09-13,R27.01,PROPOSED,Product
+CR-030,REQ-121,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-10-02,R26.11,APPROVED,Security
+CR-031,REQ-056,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-09-30,R26.11,APPROVED,Architecture
+CR-032,REQ-035,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-09-13,R27.01,APPROVED,Security
+CR-033,REQ-086,RULE_CHANGE,Modify business decision rule and expected rejection behavior.,2026-09-03,R26.11,APPROVED,Security
+CR-034,REQ-029,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-09-30,R27.01,PROPOSED,Architecture
+CR-035,REQ-057,API_CHANGE,Change request or response contract and add a new mandatory field.,2026-10-09,R26.11,IMPLEMENTING,Compliance
+CR-036,REQ-044,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-10-06,R26.11,PROPOSED,Operations
+CR-037,REQ-134,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-09-14,R27.01,APPROVED,Architecture
+CR-038,REQ-004,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-09-16,R26.11,APPROVED,Operations
+CR-039,REQ-057,NFR_CHANGE,"Tighten latency, resiliency, or observability target for release readiness.",2026-09-10,R26.11,APPROVED,Product
+CR-040,REQ-011,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-10-03,R26.11,APPROVED,Compliance
+CR-041,REQ-101,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-10-15,R26.11,APPROVED,Operations
+CR-042,REQ-062,SCOPE_CHANGE,Expand supported business scenario to an additional customer segment.,2026-10-06,R26.11,IMPLEMENTING,Operations
+CR-043,REQ-056,RULE_CHANGE,Modify business decision rule and expected rejection behavior.,2026-09-23,R27.01,PROPOSED,Product
+CR-044,REQ-005,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-10-13,R27.01,PROPOSED,Operations
+CR-045,REQ-007,SECURITY_CHANGE,Require stronger identity or authorization control before the action.,2026-09-30,R26.11,IMPLEMENTING,Operations

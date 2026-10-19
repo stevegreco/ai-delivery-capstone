@@ -1,0 +1,394 @@
+[
+  {
+    "storyRef": "MBS-001",
+    "featureRef": "MBF-02",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 1",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-002",
+    "featureRef": "MBF-03",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 2",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-003",
+    "featureRef": "MBF-04",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 3",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-004",
+    "featureRef": "MBF-05",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 4",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-005",
+    "featureRef": "MBF-01",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 5",
+    "acceptanceHints": [
+      "easy and quick"
+    ]
+  },
+  {
+    "storyRef": "MBS-006",
+    "featureRef": "MBF-02",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 6",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-007",
+    "featureRef": "MBF-03",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 7",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-008",
+    "featureRef": "MBF-04",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 8",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-009",
+    "featureRef": "MBF-05",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 9",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-010",
+    "featureRef": "MBF-01",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 10",
+    "acceptanceHints": [
+      "easy and quick"
+    ]
+  },
+  {
+    "storyRef": "MBS-011",
+    "featureRef": "MBF-02",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 11",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-012",
+    "featureRef": "MBF-03",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 12",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-013",
+    "featureRef": "MBF-04",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 13",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-014",
+    "featureRef": "MBF-05",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 14",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-015",
+    "featureRef": "MBF-01",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 15",
+    "acceptanceHints": [
+      "easy and quick"
+    ]
+  },
+  {
+    "storyRef": "MBS-016",
+    "featureRef": "MBF-02",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 16",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-017",
+    "featureRef": "MBF-03",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 17",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-018",
+    "featureRef": "MBF-04",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 18",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-019",
+    "featureRef": "MBF-05",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 19",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-020",
+    "featureRef": "MBF-01",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 20",
+    "acceptanceHints": [
+      "easy and quick"
+    ]
+  },
+  {
+    "storyRef": "MBS-021",
+    "featureRef": "MBF-02",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 21",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-022",
+    "featureRef": "MBF-03",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 22",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-023",
+    "featureRef": "MBF-04",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 23",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-024",
+    "featureRef": "MBF-05",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 24",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-025",
+    "featureRef": "MBF-01",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 25",
+    "acceptanceHints": [
+      "easy and quick"
+    ]
+  },
+  {
+    "storyRef": "MBS-026",
+    "featureRef": "MBF-02",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 26",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-027",
+    "featureRef": "MBF-03",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 27",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-028",
+    "featureRef": "MBF-04",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 28",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-029",
+    "featureRef": "MBF-05",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 29",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-030",
+    "featureRef": "MBF-01",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 30",
+    "acceptanceHints": [
+      "easy and quick"
+    ]
+  },
+  {
+    "storyRef": "MBS-031",
+    "featureRef": "MBF-02",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 31",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-032",
+    "featureRef": "MBF-03",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 32",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-033",
+    "featureRef": "MBF-04",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 33",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-034",
+    "featureRef": "MBF-05",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 34",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-035",
+    "featureRef": "MBF-01",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 35",
+    "acceptanceHints": [
+      "easy and quick"
+    ]
+  },
+  {
+    "storyRef": "MBS-036",
+    "featureRef": "MBF-02",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 36",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-037",
+    "featureRef": "MBF-03",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 37",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-038",
+    "featureRef": "MBF-04",
+    "persona": "Support Agent",
+    "intent": "Complete mobile banking scenario 38",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-039",
+    "featureRef": "MBF-05",
+    "persona": "Retail Customer",
+    "intent": "Complete mobile banking scenario 39",
+    "acceptanceHints": [
+      "clear success state",
+      "audit event recorded"
+    ]
+  },
+  {
+    "storyRef": "MBS-040",
+    "featureRef": "MBF-01",
+    "persona": "Premium Customer",
+    "intent": "Complete mobile banking scenario 40",
+    "acceptanceHints": [
+      "easy and quick"
+    ]
+  }
+]

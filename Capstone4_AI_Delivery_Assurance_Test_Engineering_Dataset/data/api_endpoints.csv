@@ -1,0 +1,12 @@
+endpoint_id,path,method,domain,purpose,response_codes,authentication,idempotency_required
+API-001,/api/v2/cart/validate,POST,checkout,Validate cart before checkout,"200,400,409,503",OAuth2/JWT,YES
+API-002,/api/v2/checkout/submit,POST,checkout,Submit checkout transaction,"201,400,409,422,503",OAuth2/JWT,YES
+API-003,/api/v2/payments/authorize,POST,payments,Authorize payment,"200,202,400,402,409,503",OAuth2/JWT,YES
+API-004,/api/v2/payments/{id},GET,payments,Get payment state,"200,404",OAuth2/JWT,NO
+API-005,/api/v2/refunds,POST,refunds,Create refund,"201,202,400,409,422",OAuth2/JWT,YES
+API-006,/api/v2/refunds/{id},GET,refunds,Get refund state,"200,404",OAuth2/JWT,NO
+API-007,/api/v2/auth/token,POST,identity,Issue access token,"200,400,401,429",Client + credential flow,NO
+API-008,/api/v2/auth/step-up,POST,identity,Perform step-up authentication,"200,400,401,423",Client + credential flow,NO
+API-009,/api/v2/orders,POST,orders,Create order,"201,400,409,422,503",OAuth2/JWT,YES
+API-010,/api/v2/orders/{id},GET,orders,Get order state,"200,404",OAuth2/JWT,NO
+API-011,/api/v2/notifications,POST,notifications,Submit notification,"202,400,409,429,503",OAuth2/JWT,NO
