@@ -1,0 +1,23 @@
+<h1>AI Delivery Assurance Copilot</h1>
+<p>An 8-week capstone building a governed AI copilot that traces requirements through acceptance criteria, tests, results and release readiness. This site publishes the plan, weekly journal and design decisions from the repo's <code>docs/</code> folder.</p>
+
+{% set sections = [
+  { name: "plan", label: "Plan" },
+  { name: "journal", label: "Weekly journal" },
+  { name: "adr", label: "Decision records" },
+  { name: "notes", label: "Notes" }
+] %}
+
+{% for s in sections %}
+  {% set pages = collections.all | section(s.name) %}
+  <h2>{{ s.label }}</h2>
+  {% if pages.length %}
+    <ul>
+      {% for p in pages %}
+        <li><a href="{{ p.url }}">{{ p.data.title or p.fileSlug }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">Nothing yet.</p>
+  {% endif %}
+{% endfor %}

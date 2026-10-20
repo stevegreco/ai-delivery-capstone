@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title or page.fileSlug }} · AI Delivery Capstone</title>
+  <style>
+    :root {
+      --bg: #fdfdfc; --fg: #1f2328; --muted: #59636e; --line: #d8dee4;
+      --link: #0969da; --code-bg: #f3f4f6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --line: #30363d;
+        --link: #4493f8; --code-bg: #161b22;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--fg);
+      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    header, main { max-width: 52rem; margin: 0 auto; padding: 0 1rem; }
+    header { display: flex; gap: 1rem; align-items: baseline; padding-top: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line); }
+    header a { color: var(--fg); font-weight: 600; text-decoration: none; }
+    header span { color: var(--muted); font-size: 0.9rem; }
+    main { padding-bottom: 4rem; }
+    a { color: var(--link); }
+    h1, h2, h3 { line-height: 1.25; }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--line); padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+    code { background: var(--code-bg); padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.9em; }
+    pre { background: var(--code-bg); padding: 1rem; border-radius: 6px; overflow-x: auto; }
+    pre code { padding: 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/">AI Delivery Capstone</a>
+    <span>Learning log · Oct 19 – Dec 13, 2026</span>
+  </header>
+  <main>
+    {{ content | safe }}
+  </main>
+</body>
+</html>
