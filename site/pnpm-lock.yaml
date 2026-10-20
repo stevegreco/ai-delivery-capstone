@@ -11,6 +11,9 @@ importers:
       '@11ty/eleventy':
         specifier: 3.1.6
         version: 3.1.6
+      '@stevegreco/design-system':
+        specifier: 0.0.6
+        version: 0.0.6
 
 packages:
 
@@ -61,6 +64,9 @@ packages:
   '@sindresorhus/transliterate@1.6.0':
     resolution: {integrity: sha512-doH1gimEu3A46VX6aVxpHTeHrytJAG6HgdxntYnCFiIFHEM/ZGpG8KiZGBChchjQmG0XFIBL552kBTjVcMZXwQ==}
     engines: {node: '>=12'}
+
+  '@stevegreco/design-system@0.0.6':
+    resolution: {integrity: sha512-GqiQ5CEbWHTwI/G8Xms2UMZuFLKcMEe+UZwovrIT347O2b14698/aKzP7LXIxOvYgvlaBeJevb8eJqTP0vmtfw==}
 
   a-sync-waterfall@1.0.1:
     resolution: {integrity: sha512-RYTOHHdWipFUliRFMCS4X2Yn2X8M87V/OpSqWzKKOGhzqyUxzyVmhHDH9sAvG+ZuQf/TAOFsLCpMw09I1ufUnA==}
@@ -649,6 +655,8 @@ snapshots:
   '@sindresorhus/transliterate@1.6.0':
     dependencies:
       escape-string-regexp: 5.0.0
+
+  '@stevegreco/design-system@0.0.6': {}
 
   a-sync-waterfall@1.0.1: {}
 

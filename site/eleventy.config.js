@@ -4,6 +4,11 @@ export default function (eleventyConfig) {
   // Rewrites absolute URLs ("/plan/ROADMAP/") to include the --pathprefix on GitHub Pages.
   eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
 
+  // Design tokens from the npm package, served at /css/tokens.css.
+  eleventyConfig.addPassthroughCopy({
+    "node_modules/@stevegreco/design-system/dist/css/tokens.css": "css/tokens.css",
+  });
+
   // Every markdown file in docs/ uses the base layout, so docs/ needs no front matter.
   eleventyConfig.addGlobalData("layout", "base.njk");
 

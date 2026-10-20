@@ -4,36 +4,85 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ title or page.fileSlug }} · AI Delivery Capstone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Lora:wght@500&family=Source+Sans+3:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/css/tokens.css">
   <style>
-    :root {
-      --bg: #fdfdfc; --fg: #1f2328; --muted: #59636e; --line: #d8dee4;
-      --link: #0969da; --code-bg: #f3f4f6;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --line: #30363d;
-        --link: #4493f8; --code-bg: #161b22;
-      }
-    }
     * { box-sizing: border-box; }
     body {
-      margin: 0; background: var(--bg); color: var(--fg);
-      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+      margin: 0;
+      background: var(--semantic-color-background-default);
+      color: var(--semantic-color-foreground-default);
+      font-family: var(--semantic-typography-body-default-font-family);
+      font-size: var(--semantic-typography-body-default-font-size);
+      line-height: var(--primitives-leading-relaxed);
     }
-    header, main { max-width: 52rem; margin: 0 auto; padding: 0 1rem; }
-    header { display: flex; gap: 1rem; align-items: baseline; padding-top: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line); }
-    header a { color: var(--fg); font-weight: 600; text-decoration: none; }
-    header span { color: var(--muted); font-size: 0.9rem; }
-    main { padding-bottom: 4rem; }
-    a { color: var(--link); }
-    h1, h2, h3 { line-height: 1.25; }
-    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
-    th, td { border: 1px solid var(--line); padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
-    code { background: var(--code-bg); padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.9em; }
-    pre { background: var(--code-bg); padding: 1rem; border-radius: 6px; overflow-x: auto; }
-    pre code { padding: 0; }
-    hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
-    .muted { color: var(--muted); }
+    header, main { max-width: var(--primitives-layout-prose); margin: 0 auto; padding: 0 var(--primitives-space-4); }
+    header {
+      display: flex; flex-wrap: wrap; gap: var(--primitives-space-1) var(--primitives-space-4); align-items: baseline;
+      padding-top: var(--primitives-space-5); padding-bottom: var(--primitives-space-3);
+      border-bottom: var(--primitives-border-thin) solid var(--semantic-color-border-subtle);
+    }
+    header a {
+      color: var(--semantic-color-foreground-default); text-decoration: none;
+      font-family: var(--semantic-typography-label-default-font-family);
+      font-weight: var(--primitives-weight-semibold);
+    }
+    header span {
+      color: var(--semantic-color-foreground-muted);
+      font-family: var(--semantic-typography-eyebrow-font-family);
+      font-size: var(--semantic-typography-eyebrow-font-size);
+      font-weight: var(--semantic-typography-eyebrow-font-weight);
+      letter-spacing: var(--semantic-typography-eyebrow-letter-spacing);
+      text-transform: uppercase;
+    }
+    main { padding-bottom: var(--primitives-space-16); }
+    a { color: var(--semantic-color-foreground-brand-default); }
+    a:focus-visible { outline: var(--primitives-border-thick) solid var(--semantic-color-border-focus); outline-offset: 2px; }
+    h1 {
+      font-family: var(--semantic-typography-heading-large-font-family);
+      font-size: var(--semantic-typography-heading-large-font-size);
+      font-weight: var(--semantic-typography-heading-large-font-weight);
+      line-height: var(--semantic-typography-heading-large-line-height);
+      letter-spacing: var(--semantic-typography-heading-large-letter-spacing);
+    }
+    h2 {
+      font-family: var(--semantic-typography-heading-default-font-family);
+      font-size: var(--semantic-typography-heading-default-font-size);
+      font-weight: var(--semantic-typography-heading-default-font-weight);
+      line-height: var(--semantic-typography-heading-default-line-height);
+      letter-spacing: var(--semantic-typography-heading-default-letter-spacing);
+      margin-top: var(--primitives-space-10);
+    }
+    h3 {
+      font-family: var(--semantic-typography-heading-small-font-family);
+      font-size: var(--semantic-typography-heading-small-font-size);
+      font-weight: var(--semantic-typography-heading-small-font-weight);
+      line-height: var(--semantic-typography-heading-small-line-height);
+      letter-spacing: var(--semantic-typography-heading-small-letter-spacing);
+      margin-top: var(--primitives-space-8);
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; font-size: var(--semantic-typography-body-small-font-size); }
+    th, td {
+      border: var(--primitives-border-thin) solid var(--semantic-color-border-subtle);
+      padding: var(--primitives-space-2) var(--primitives-space-3);
+      text-align: left; vertical-align: top;
+    }
+    th { background: var(--semantic-color-background-sunken); font-weight: var(--primitives-weight-semibold); }
+    code {
+      font-family: var(--semantic-typography-code-default-font-family);
+      font-size: 0.875em;
+      background: var(--semantic-color-background-sunken);
+      padding: 0.1em 0.3em; border-radius: var(--primitives-radius-xs);
+    }
+    pre {
+      background: var(--semantic-color-background-sunken);
+      padding: var(--primitives-space-4); border-radius: var(--primitives-radius-sm); overflow-x: auto;
+    }
+    pre code { padding: 0; background: none; }
+    hr { border: 0; border-top: var(--primitives-border-thin) solid var(--semantic-color-border-subtle); margin: var(--primitives-space-8) 0; }
+    .muted { color: var(--semantic-color-foreground-muted); }
   </style>
 </head>
 <body>

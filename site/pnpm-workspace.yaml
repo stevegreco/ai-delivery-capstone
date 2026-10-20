@@ -1,0 +1,2 @@
+minimumReleaseAgeExclude:
+  - '@stevegreco/design-system@0.0.6'
