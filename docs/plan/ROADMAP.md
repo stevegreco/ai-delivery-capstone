@@ -4,6 +4,8 @@ Weeks run Monday to Sunday. Week 6 includes US Thanksgiving (Nov 26).
 
 Each week maps to a GitHub **milestone**, and each week's issues are in [ISSUES.md](ISSUES.md).
 
+A plain-language review of this plan against the requirements and dataset is in [POTETO-REVIEW.md](POTETO-REVIEW.md).
+
 The order is deliberate:
 1. Understand the domain before writing code.
 2. Build the deterministic core (data, traceability, readiness rules) before adding AI.
