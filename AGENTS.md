@@ -41,3 +41,12 @@ This repo is a **learning project**. The goal is for the owner to understand eve
 - **Learning journal** goes in `docs/journal/week-NN.md`: what I learned, what confused me, open questions.
 - Keep deterministic logic (traceability, coverage, readiness rules) separate from LLM logic. Don't use an LLM for anything a query can answer.
 - Every AI output must cite its sources (document ID, section, row ID) or be marked unsupported.
+
+## Cursor Cloud specific instructions
+
+The only runnable app is the Eleventy site in `site/`. It publishes markdown from `docs/`. There is no test suite.
+
+- Node 22. `site/package.json` pins `pnpm@11.1.3` in `packageManager`. Run pnpm from `site/` so Corepack selects that version. From the repo root it falls back to a different pnpm.
+- Install: `cd site && pnpm install --frozen-lockfile`
+- Dev server: `cd site && pnpm start` (`eleventy --serve` on port 8080).
+- Check: `cd site && pnpm build`. Output is `site/_site`. GitHub Pages uses `pnpm build-ghpages`.
