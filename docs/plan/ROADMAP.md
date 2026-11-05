@@ -20,6 +20,20 @@ Eight weeks is tight, so most weeks combine two themes. The plan assumes **8–1
 
 W4-05 (requirement extraction) is stretch too, but cut it as soon as Week 4 runs long. Check progress at the end of Weeks 2 and 4, and cut early rather than late.
 
+## Catch-up (Nov 5, Week 3)
+
+At the Week 2 checkpoint, Week 1 was partly done (glossary and diagram) and Week 2 hadn't started. The build is now agentic (see [AGENTS.md](../../AGENTS.md)): Claude Code writes the code in small pieces, and Steve decides, reviews and explains. Catch-up order:
+
+1. W1-04 stack ADR (blocks all Week 2 code)
+2. W1-03 manual baseline, 3 scenarios, before any query code
+3. W2-01 delivery model ADR
+4. W2-02 loader and validation (W1-02's data profile comes from it)
+5. W2-03 traceability and coverage gaps
+6. W2-04 readiness rules v0
+7. Journals for Weeks 1 and 2
+
+Estimate: about 9–11 focused hours, then Week 3. **Cuts: not decided yet.** The suggestion is W7-03 and W8-03 from the cut order.
+
 | Week | Dates | Theme | You'll be able to explain… |
 |---|---|---|---|
 | 1 | Oct 19 – Oct 25 | Orientation & domain | What "delivery assurance" means, and how requirements, ACs, tests, runs and defects relate |
