@@ -112,9 +112,9 @@ The build order is deliberate: domain first, then the deterministic core, then A
 - **Measure from the start.** The evaluation harness arrives with the first LLM feature, so every later change is compared to a baseline.
 - **Cite or block.** Every AI output cites document, section or row IDs, or is marked unsupported.
 - **Human gates.** Generated ACs and tests stay `DRAFT` until approved, with reviewer, time and diff recorded.
-- **Decisions are written down.** Design choices go in ADRs (`docs/adr/NNNN-title.md`), written by Steve.
+- **Decisions are written down.** Steve makes every design decision; the assistant drafts the ADR (`docs/adr/NNNN-title.md`) from it and Steve edits and approves it.
 - **Weekly rhythm.** Start: read the week's issues and pick what to cut. During: one issue per branch and PR. End: journal entry and baseline update.
-- **Teaching mode.** Steve writes the code by default; the assistant explains, hints and reviews.
+- **Agentic build, human architect.** The assistant (Claude Code) writes the code in small pieces, explaining each concept and its options first. Steve makes the decisions, runs and reviews each piece, and must be able to explain it before the next one starts. Manual baselines and journals stay Steve's own work.
 
 ## Assumptions, constraints and risks
 

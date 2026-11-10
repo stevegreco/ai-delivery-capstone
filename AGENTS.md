@@ -16,17 +16,25 @@ This repo is a **learning project**. The goal is for the owner to understand eve
 3. Do not add dependencies, frameworks or services without first explaining what they do and getting a yes.
 4. If you spot something that belongs to a later issue, mention it in one line and move on.
 
-### Teaching mode (default)
-5. **Explain before building.** Start with the concept, why it matters for this project, and the options with their trade-offs. Keep it short, then check that the user is following.
-6. **The user writes the code by default.** Give hints, pseudocode, review and debugging help. Write code only when asked, and then in small pieces the user can read in one sitting. Explain anything that isn't obvious.
-7. **Ask instead of deciding.** Design choices (data model, chunking strategy, prompt shape, metrics, thresholds) belong to the user. Lay out the options and recommend one, but let the user decide.
-8. **Use questions.** When the user is stuck, ask a guiding question before giving the answer, unless they ask for the answer directly.
-9. **Check understanding at the end.** When an issue is done, ask 2–3 short questions that test the main idea, and suggest what to write in the learning journal.
+### How we work: the agent builds, the user is the architect (default)
+The project is built agentically, the way software is built in 2026: the agent writes the code. The user decides everything and must understand the system well enough to answer any question about it as its architect. Small, understood pieces beat large generated ones.
 
-### Change user mode on request
-- "Just show me" or "write it": write the code, still in small pieces, and explain it afterward.
+5. **Explain before building.** For each piece, start with the concept, why it matters for this project, and the options with their trade-offs. Keep it short.
+6. **The user decides.** Design choices (data model, chunking strategy, prompt shape, metrics, thresholds, dependencies) belong to the user. Lay out the options and recommend one, then wait for the decision. Never decide silently by writing code that assumes an answer.
+7. **The agent builds in small pieces.** Write one piece at a time, about 30–80 lines, covering one concept (e.g. loading one table, one validation rule). Explain anything that isn't obvious.
+8. **Check before moving on.** After each piece, the user runs it and says what it does in a sentence or two. If they can't, stop and explain before starting the next piece.
+9. **One piece, one commit.** Each piece is its own commit with a clear message. Each issue gets its own branch and PR.
+10. **Check understanding at the end.** When an issue is done, ask 2–3 short questions that test the main idea, the kind an architect would be asked, and suggest what to write in the learning journal.
+
+### Work that stays human
+- **Manual baselines** (W1-03 golden scenarios, W3-02 AC labels) are the user's own judgment. The agent doesn't help produce them and doesn't build the feature they measure until they exist.
+- **Journals** are written by the user. The agent may suggest prompts.
+
+### Change mode on request
+- "Just build it": write a larger piece in one go, then walk through it afterward.
 - "Review this": review only. Don't rewrite unless asked.
 - "Explain": explanation only. No code changes.
+- "Quiz me": ask questions about the system as it stands, without giving answers first.
 
 ### Hard boundaries
 - `Capstone4_AI_Delivery_Assurance_Test_Engineering_Dataset/` is **read-only**. Never edit, move or regenerate the source data.
@@ -37,7 +45,7 @@ This repo is a **learning project**. The goal is for the owner to understand eve
 
 ## Project conventions
 
-- **Decisions** go in `docs/adr/NNNN-title.md` (context, options, decision, consequences). The user writes them, and agents may review.
+- **Decisions** go in `docs/adr/NNNN-title.md` (context, options, decision, consequences). The user makes the decision in the session first. Then the agent drafts the ADR from it, and the user edits and approves it. The agent never drafts a decision the user hasn't stated.
 - **Learning journal** goes in `docs/journal/week-NN.md`: what I learned, what confused me, open questions.
 - Keep deterministic logic (traceability, coverage, readiness rules) separate from LLM logic. Don't use an LLM for anything a query can answer.
 - Every AI output must cite its sources (document ID, section, row ID) or be marked unsupported.

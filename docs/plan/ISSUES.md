@@ -22,6 +22,7 @@ These are draft GitHub issues, grouped by week. Each week becomes a milestone, a
 
 ### W1-02 · Explore the reference data by hand
 `week-1` `learn`
+> **Catch-up change (Nov 5):** folded into W2-02. The loader's row counts, enum checks and data-quality report become `docs/notes/data-profile.md`, and the user adds the 3+ oddities they notice.
 - **Learn:** How to profile a dataset before trusting it.
 - **Do:** Load the `data/` CSVs into a notebook, SQLite or a spreadsheet. Count rows, look at the values of status, priority and type, and follow one requirement end to end (REQ → ACs → tests → executions → defects).
 - **Done when:** `docs/notes/data-profile.md` lists row counts, the key columns, the enum values and at least 3 data oddities you noticed.
@@ -29,6 +30,7 @@ These are draft GitHub issues, grouped by week. Each week becomes a milestone, a
 
 ### W1-03 · Solve 5 golden scenarios manually
 `week-1` `eval`
+> **Catch-up change (Nov 5):** reduced to 3 scenarios: COVERAGE_GAP, TRACEABILITY, and RELEASE or DELIVERY_READINESS, the ones W2-03 and W2-04 are compared against. Still fully manual, and it must be done before any W2-03 query code is written.
 - **Learn:** What a correct answer looks like. You're the first "model."
 - **Do:** Choose 5 scenarios from `developer_aid/golden_delivery_assurance_scenarios.csv` in different categories. Answer each using only the data and PDFs. Time yourself.
 - **Done when:** Your answers, the evidence you used and the time taken are recorded in `docs/notes/manual-baseline.md`.
