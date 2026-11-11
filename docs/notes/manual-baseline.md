@@ -124,20 +124,23 @@ Removing the line `AND tc.status = 'ACTIVE'` returns only my 2. That single cond
 - **Time taken:**
 
 ### My answer
-- **Decision (e.g. GO / NO-GO / CONDITIONAL):**
-- **Reasons:**
+- **Decision (e.g. GO / NO-GO / CONDITIONAL):** **NO-GO.** An open S1 defect blocks release.
+- **Reasons:** Doc 05 §4 (Coverage and Quality Gates) says open S1 defects are release-blocking. In release R27.01, which I checked, there are no S1 defects, so this gate doesn't block R27.01.
 
 ### Evidence
 | ID | File / document | Column or section | What it showed |
 |---|---|---|---|
-| | | | |
+| DOC-05 | `05_Release_Governance_and_Test_Strategy.pdf` | §4 Coverage and Quality Gates | Open S1 defects are release-blocking |
+| R27.01 | `defects.csv` | `release`, `severity` | No S1 defects in R27.01 |
 
 ### How I got there
-1.
+1. Read Doc 05 for the release policy on defect severity and found the rule in §4.
+2. Filtered `defects` in Datasette to release R27.01 and checked the severities.
 
 ### Confidence and doubts
 - **Confidence (low / medium / high):**
 - **What I wasn't sure about:**
+- **Scope I chose:** the question doesn't name a release, and I checked only R27.01.
 
 ---
 
