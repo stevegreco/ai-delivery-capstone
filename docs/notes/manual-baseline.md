@@ -90,13 +90,25 @@ Removing the line `AND tc.status = 'ACTIVE'` returns only my 2. That single cond
 
 ### My answer
 
+**REQ-013 has no test coverage.** It has no test cases and no traceability links. Its two acceptance criteria are both still `DRAFT`. It's a P2 requirement, in scope for R27.01 but not release-blocking, and it has no defects.
+
+- **Verdict (covered / partial / gap):**
+- **What should happen next, and in what order:**
+
 ### Evidence
 | ID | File / document | Column or section | What it showed |
 |---|---|---|---|
-| | | | |
+| REQ-013 | `requirements.csv` | `priority`, `release` | P2, R27.01 |
+| REQ-013 | `release_scope.csv` | `in_scope`, `release_blocking` | In scope for R27.01, not blocking |
+| AC-0040, AC-0041 | `acceptance_criteria.csv` | `status` | Both `DRAFT` |
+| REQ-013 | `test_cases.csv` | `requirement_id` | No test case points to it |
+| REQ-013 | `traceability_links.csv` | `requirement_id` | No links |
+| REQ-013 | `defects.csv` | `requirement_id` | No defects |
 
 ### How I got there
-1.
+1. Opened REQ-013's row page in Datasette and read its priority and release.
+2. Checked the tables linking to it: release scope, ACs, test cases, traceability links and defects.
+3. Checked the status of each linked AC.
 
 ### Confidence and doubts
 - **Confidence (low / medium / high):**
