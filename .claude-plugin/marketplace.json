@@ -1,0 +1,14 @@
+{
+  "name": "learning-project-marketplace",
+  "owner": {
+    "name": "Steve Greco"
+  },
+  "description": "Skills for running projects as structured learning exercises.",
+  "plugins": [
+    {
+      "name": "learning-project",
+      "source": "./plugins/learning-project",
+      "description": "Skills for running a project as a structured learning exercise."
+    }
+  ]
+}
