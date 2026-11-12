@@ -1,18 +1,35 @@
 """ORM models for the core schema (ADR 0002).
 
-Only the bookkeeping tables exist so far; the rest arrive in piece 4.
 Per ADR 0002 there is no relationship(): foreign keys are plain columns.
+Mapped[str] means NOT NULL; Mapped[str | None] means the column is optional.
 """
 
-from datetime import datetime
+from datetime import date, datetime
+from typing import Any
 
-from sqlalchemy import DateTime, ForeignKey, String, Text
+from sqlalchemy import (CheckConstraint, Date, DateTime, ForeignKey, MetaData,
+                        String, Text, UniqueConstraint)
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+# Readable constraint names in the DDL and in error messages,
+# e.g. ck_requirement_priority instead of an auto-generated one.
+NAMING = {"ck": "ck_%(table_name)s_%(constraint_name)s",
+          "uq": "uq_%(table_name)s_%(column_0_N_name)s",
+          "fk": "fk_%(table_name)s_%(column_0_name)s"}
 
 
 class Base(DeclarativeBase):
-    pass
+    metadata = MetaData(naming_convention=NAMING)
 
+
+def allowed(column: str, *values: str) -> CheckConstraint:
+    """CHECK that a text column holds one of the agreed values (from the data profile)."""
+    listed = ", ".join(f"'{v}'" for v in values)
+    return CheckConstraint(f"{column} IN ({listed})", name=column)
+
+
+# --- Bookkeeping -------------------------------------------------------------
 
 class Project(Base):
     """One source project, e.g. REFERENCE (the 11 CSVs) or SET_A (Jira)."""
@@ -44,3 +61,67 @@ class SourceFile(Base):
     path: Mapped[str] = mapped_column(Text)
     sha256: Mapped[str] = mapped_column(String(64))
     row_count: Mapped[int]
+
+
+# --- Shared column sets (mixins) ---------------------------------------------
+
+class Keyed:
+    """Internal id + the source's own ID, unique within a project."""
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey("project.id"))
+    external_id: Mapped[str] = mapped_column(Text)  # e.g. REQ-013; the only ID reports show
+
+
+class Provenance:
+    """Where a loaded row came from: file, data row, and the original row as read."""
+
+    source_file_id: Mapped[int] = mapped_column(ForeignKey("source_file.id"))
+    source_row: Mapped[int]
+    source_payload: Mapped[dict[str, Any]] = mapped_column(JSONB)
+
+
+# --- Core: releases and requirements -----------------------------------------
+
+class Release(Base, Keyed):
+    """Built from release values seen in the files; there is no release file."""
+
+    __tablename__ = "release"
+    __table_args__ = (UniqueConstraint("project_id", "external_id"),)
+
+
+class Requirement(Base, Keyed, Provenance):
+    __tablename__ = "requirement"
+    __table_args__ = (
+        UniqueConstraint("project_id", "external_id"),
+        allowed("priority", "P0", "P1", "P2", "P3"),
+        allowed("status", "DRAFT", "REVIEW", "APPROVED"),
+        allowed("approval_status", "PENDING_REVIEW", "APPROVED"),
+    )
+    parent_id: Mapped[int | None] = mapped_column(ForeignKey("requirement.id"))  # epic
+    domain: Mapped[str | None] = mapped_column(Text)
+    title: Mapped[str] = mapped_column(Text)
+    description: Mapped[str | None] = mapped_column(Text)
+    requirement_type: Mapped[str | None] = mapped_column(Text)
+    priority: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(Text)
+    approval_status: Mapped[str] = mapped_column(Text)
+    version: Mapped[str | None] = mapped_column(Text)
+    effective_date: Mapped[date | None] = mapped_column(Date)
+    owner: Mapped[str | None] = mapped_column(Text)
+    source_document_id: Mapped[int | None]  # FK added with source_document (piece 8)
+    source_section: Mapped[str | None] = mapped_column(Text)
+
+
+class ReleaseScope(Base, Provenance):
+    """Which requirements are in which release. Keyed by the pair, so no external_id."""
+
+    __tablename__ = "release_scope"
+    __table_args__ = (UniqueConstraint("release_id", "requirement_id"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    release_id: Mapped[int] = mapped_column(ForeignKey("release.id"))
+    requirement_id: Mapped[int] = mapped_column(ForeignKey("requirement.id"))
+    in_scope: Mapped[bool]
+    release_blocking: Mapped[bool]
+    criticality: Mapped[str | None] = mapped_column(Text)  # Set A only
+    business_owner: Mapped[str | None] = mapped_column(Text)
