@@ -10,7 +10,6 @@ recorded as parent_rejected.
 from sqlalchemy import Connection, text
 
 from delivery_assurance.checks import KEYS
-from delivery_assurance.db import get_engine
 
 # The original row, minus the two bookkeeping columns, kept as JSON.
 PAYLOAD = "to_jsonb(s) - 'source_file_id' - 'source_row'"
@@ -175,6 +174,7 @@ def promote(conn: Connection) -> None:
 
 
 def print_counts(conn: Connection) -> None:
+    """Staging rows vs rows in core vs rows kept out by an ERROR."""
     print(f"{'core table':<22}{'staging':>8}{'core':>6}{'kept out':>10}")
     for core, staging, _ in STEPS:
         n_stg, n_core, n_out = conn.execute(text(f"""
@@ -183,14 +183,3 @@ def print_counts(conn: Connection) -> None:
                     WHERE table_name = '{staging}' AND severity = 'ERROR')""")).one()
         print(f"{core:<22}{n_stg:>8}{n_core:>6}{n_out:>10}")
 
-
-if __name__ == "__main__":
-    # Until piece 7's rebuild command: staging -> checks -> promote, in order.
-    from delivery_assurance.checks import run_checks
-    from delivery_assurance.staging import load_staging
-
-    load_staging()
-    with get_engine().begin() as conn:
-        run_checks(conn)
-        promote(conn)
-        print_counts(conn)

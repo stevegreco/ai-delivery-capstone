@@ -10,7 +10,7 @@ import hashlib
 from datetime import UTC, datetime
 from pathlib import Path
 
-from sqlalchemy import Column, Integer, MetaData, Table, Text, text
+from sqlalchemy import Column, Connection, Integer, MetaData, Table, Text, text
 from sqlalchemy.orm import Session
 
 from delivery_assurance.db import get_engine
@@ -46,46 +46,47 @@ def stage_file(session: Session, path: Path, source_file_id: int, rows, header) 
     ])
 
 
-def load_staging() -> None:
-    """Rebuild bookkeeping + staging from scratch, in one transaction."""
-    with Session(get_engine()) as session, session.begin():
-        conn = session.connection()
-        conn.execute(text("DROP SCHEMA IF EXISTS staging CASCADE"))
-        conn.execute(text("CREATE SCHEMA staging"))
-        Base.metadata.drop_all(conn)
-        Base.metadata.create_all(conn)
+def load_staging(conn: Connection) -> None:
+    """Rebuild bookkeeping + staging from scratch, inside the caller's transaction.
 
-        project = Project(key="REFERENCE", name="Reference CSVs")
-        session.add(project)
-        session.flush()  # assigns project.id
-        run = IngestionRun(project_id=project.id, adapter="reference_csv",
-                           loader_version=LOADER_VERSION, started_at=datetime.now(UTC))
-        session.add(run)
+    finished_at is left empty; the rebuild sets it once checks and promotion are done.
+    """
+    session = Session(bind=conn)  # joins the caller's transaction; never commits itself
+    conn.execute(text("DROP SCHEMA IF EXISTS staging CASCADE"))
+    conn.execute(text("CREATE SCHEMA staging"))
+    Base.metadata.drop_all(conn)
+    Base.metadata.create_all(conn)
+
+    project = Project(key="REFERENCE", name="Reference CSVs")
+    session.add(project)
+    session.flush()  # assigns project.id
+    run = IngestionRun(project_id=project.id, adapter="reference_csv",
+                       loader_version=LOADER_VERSION, started_at=datetime.now(UTC))
+    session.add(run)
+    session.flush()
+
+    for path in sorted(DATA_DIR.glob("*.csv")):
+        header, rows = read_csv(path)
+        source_file = SourceFile(ingestion_run_id=run.id,
+                                 path=str(path.relative_to(REPO_ROOT)),
+                                 sha256=sha256_of(path), row_count=len(rows))
+        session.add(source_file)
         session.flush()
-
-        for path in sorted(DATA_DIR.glob("*.csv")):
-            header, rows = read_csv(path)
-            source_file = SourceFile(ingestion_run_id=run.id,
-                                     path=str(path.relative_to(REPO_ROOT)),
-                                     sha256=sha256_of(path), row_count=len(rows))
-            session.add(source_file)
-            session.flush()
-            stage_file(session, path, source_file.id, rows, header)
-
-        run.finished_at = datetime.now(UTC)
+        stage_file(session, path, source_file.id, rows, header)
 
 
-def print_counts() -> None:
+def print_counts(conn: Connection) -> None:
     """Count rows in the database (not in memory) and compare with source_file."""
-    with get_engine().connect() as conn:
-        for name, expected in conn.execute(text(
-            "SELECT path, row_count FROM source_file ORDER BY path")):
-            table = Path(name).stem
-            actual = conn.execute(text(f'SELECT count(*) FROM staging."{table}"')).scalar_one()
-            flag = "" if actual == expected else "  <-- MISMATCH"
-            print(f"{table:<22}{actual:>5}{flag}")
+    for name, expected in conn.execute(text(
+        "SELECT path, row_count FROM source_file ORDER BY path")):
+        table = Path(name).stem
+        actual = conn.execute(text(f'SELECT count(*) FROM staging."{table}"')).scalar_one()
+        flag = "" if actual == expected else "  <-- MISMATCH"
+        print(f"{table:<22}{actual:>5}{flag}")
 
 
 if __name__ == "__main__":
-    load_staging()
-    print_counts()
+    # Staging only; `uv run rebuild-db` runs the whole pipeline.
+    with get_engine().begin() as conn:
+        load_staging(conn)
+        print_counts(conn)

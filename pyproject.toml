@@ -9,6 +9,9 @@ dependencies = [
     "python-dotenv>=1.0",
 ]
 
+[project.scripts]
+rebuild-db = "delivery_assurance.rebuild:main"
+
 [build-system]
 requires = ["uv_build>=0.8,<0.10"]
 build-backend = "uv_build"
