@@ -57,7 +57,95 @@ STEPS = [
     JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
     WHERE {clean("release_scope")}
     ORDER BY s.source_row"""),
+
+    ("acceptance_criterion", "acceptance_criteria", f"""
+    INSERT INTO acceptance_criterion (project_id, external_id, source_file_id, source_row,
+        source_payload, requirement_id, criterion, criterion_type, status)
+    SELECT :project_id, s.acceptance_criterion_id, s.source_file_id, s.source_row, {PAYLOAD},
+        r.id, s.criterion, nullif(s.criterion_type, ''), s.status
+    FROM staging.acceptance_criteria s
+    JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    WHERE {clean("acceptance_criteria")}
+    ORDER BY s.source_row"""),
+
+    ("test_case", "test_cases", f"""
+    INSERT INTO test_case (project_id, external_id, source_file_id, source_row,
+        source_payload, requirement_id, domain, title, test_type, preconditions, steps,
+        expected_result, automation_status, status)
+    SELECT :project_id, s.test_case_id, s.source_file_id, s.source_row, {PAYLOAD},
+        r.id, nullif(s.domain, ''), s.title, nullif(s.test_type, ''),
+        nullif(s.preconditions, ''), nullif(s.steps, ''), nullif(s.expected_result, ''),
+        nullif(s.automation_status, ''), s.status
+    FROM staging.test_cases s
+    JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    WHERE {clean("test_cases")}
+    ORDER BY s.source_row"""),
+
+    # The AC is optional: blank means "no AC". A named AC that was kept out
+    # keeps the link out too, rather than loading it without its AC.
+    ("trace_link", "traceability_links", f"""
+    INSERT INTO trace_link (project_id, external_id, source_file_id, source_row,
+        source_payload, requirement_id, acceptance_criterion_id, test_case_id,
+        link_type, status)
+    SELECT :project_id, s.link_id, s.source_file_id, s.source_row, {PAYLOAD},
+        r.id, a.id, t.id, s.link_type, s.status
+    FROM staging.traceability_links s
+    JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    JOIN test_case t ON t.project_id = :project_id AND t.external_id = s.test_case_id
+    LEFT JOIN acceptance_criterion a ON a.project_id = :project_id
+                                    AND a.external_id = s.acceptance_criterion_id
+    WHERE {clean("traceability_links")}
+      AND (coalesce(s.acceptance_criterion_id, '') = '' OR a.id IS NOT NULL)
+    ORDER BY s.source_row"""),
+
+    ("test_execution", "test_executions", f"""
+    INSERT INTO test_execution (project_id, external_id, source_file_id, source_row,
+        source_payload, test_case_id, release_id, environment, executed_at, outcome,
+        duration_seconds, build_id, evidence_uri)
+    SELECT :project_id, s.execution_id, s.source_file_id, s.source_row, {PAYLOAD},
+        t.id, rl.id, nullif(s.environment, ''),
+        s.executed_at::timestamp AT TIME ZONE 'UTC',  -- source has no zone: read as UTC
+        s.outcome, nullif(s.duration_seconds, '')::int, nullif(s.build_id, ''),
+        nullif(s.evidence_uri, '')
+    FROM staging.test_executions s
+    JOIN test_case t ON t.project_id = :project_id AND t.external_id = s.test_case_id
+    JOIN release rl ON rl.project_id = :project_id AND rl.external_id = s.release
+    WHERE {clean("test_executions")}
+    ORDER BY s.source_row"""),
+
+    # Test and requirement are optional (LEFT JOIN): a defect is never dropped
+    # for a bad pointer, because that would make readiness look better.
+    ("defect", "defects", f"""
+    INSERT INTO defect (project_id, external_id, source_file_id, source_row,
+        source_payload, test_case_id, requirement_id, release_id, severity, status,
+        summary, detected_in_build, owner_team)
+    SELECT :project_id, s.defect_id, s.source_file_id, s.source_row, {PAYLOAD},
+        t.id, r.id, rl.id, s.severity, s.status, s.summary,
+        nullif(s.detected_in_build, ''), nullif(s.owner_team, '')
+    FROM staging.defects s
+    JOIN release rl ON rl.project_id = :project_id AND rl.external_id = s.release
+    LEFT JOIN test_case t ON t.project_id = :project_id AND t.external_id = s.test_case_id
+    LEFT JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    WHERE {clean("defects")}
+    ORDER BY s.source_row"""),
 ]
+
+# Defect references that were named in the file but emptied in core because the
+# target was kept out (a dangling target already has its own WARNING).
+DEFECT_REFS_EMPTIED = """
+    INSERT INTO dq_issue (ingestion_run_id, check_name, severity, table_name,
+                          source_row, external_id, column_name, value, message)
+    SELECT :run_id, 'reference_emptied', 'WARNING', 'defects', d.source_row,
+           d.external_id, ref.col, ref.val, 'target was kept out of core; loaded empty'
+    FROM defect d
+    CROSS JOIN LATERAL (VALUES
+        ('test_case_id', d.source_payload->>'test_case_id', d.test_case_id),
+        ('requirement_id', d.source_payload->>'requirement_id', d.requirement_id)
+    ) AS ref(col, val, core_id)
+    WHERE coalesce(ref.val, '') <> '' AND ref.core_id IS NULL
+      AND NOT EXISTS (SELECT 1 FROM dq_issue x
+                      WHERE x.ingestion_run_id = :run_id AND x.table_name = 'defects'
+                        AND x.source_row = d.source_row AND x.column_name = ref.col)"""
 
 
 def record_parent_rejected(conn: Connection, core: str, staging: str, params: dict) -> None:
@@ -83,6 +171,7 @@ def promote(conn: Connection) -> None:
     for core, staging, sql in STEPS:
         conn.execute(text(sql), params)
         record_parent_rejected(conn, core, staging, params)
+    conn.execute(text(DEFECT_REFS_EMPTIED), params)
 
 
 def print_counts(conn: Connection) -> None:
@@ -97,7 +186,7 @@ def print_counts(conn: Connection) -> None:
 
 if __name__ == "__main__":
     # Until piece 7's rebuild command: staging -> checks -> promote, in order.
-    from delivery_assurance.checks import run_checks  # noqa: E402
+    from delivery_assurance.checks import run_checks
     from delivery_assurance.staging import load_staging
 
     load_staging()
