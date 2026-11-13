@@ -58,6 +58,23 @@ CONVERTIBLE = {
     ("test_executions", "duration_seconds"): "integer",
 }
 
+# References between staging tables: (table, column, target table, target column,
+# severity). A dangling required reference keeps the row out of core (ERROR).
+# Defects are loaded anyway with the reference emptied (WARNING): dropping a
+# defect would make readiness look better than it is.
+REFERENCES = [
+    ("acceptance_criteria", "requirement_id", "requirements", "requirement_id", "ERROR"),
+    ("test_cases", "requirement_id", "requirements", "requirement_id", "ERROR"),
+    ("traceability_links", "requirement_id", "requirements", "requirement_id", "ERROR"),
+    ("traceability_links", "acceptance_criterion_id",
+     "acceptance_criteria", "acceptance_criterion_id", "ERROR"),
+    ("traceability_links", "test_case_id", "test_cases", "test_case_id", "ERROR"),
+    ("test_executions", "test_case_id", "test_cases", "test_case_id", "ERROR"),
+    ("release_scope", "requirement_id", "requirements", "requirement_id", "ERROR"),
+    ("defects", "test_case_id", "test_cases", "test_case_id", "WARNING"),
+    ("defects", "requirement_id", "requirements", "requirement_id", "WARNING"),
+]
+
 @dataclass
 class Check:
     name: str
@@ -121,9 +138,23 @@ def unconvertible_checks() -> list[Check]:
         for (table, column), pg_type in CONVERTIBLE.items()]
 
 
+def dangling_reference_checks() -> list[Check]:
+    """IDs that are not in the target file at all. Rows whose target exists but
+    is itself rejected are caught when promoting in dependency order (piece 6)."""
+    checks = []
+    for table, column, target, target_col, severity in REFERENCES:
+        effect = "row kept out of core" if severity == "ERROR" else "loaded with this reference empty"
+        condition = f"""NOT EXISTS (SELECT 1 FROM staging."{target}" t
+                                 WHERE t."{target_col}" = staging."{table}"."{column}")"""
+        checks.append(Check("dangling_reference", severity, bad_value_query(
+            table, column, condition, f"'not found in {target}; {effect}'")))
+    return checks
+
+
 def all_checks() -> list[Check]:
     return (duplicate_id_checks() + missing_required_checks()
-            + invalid_enum_checks() + unconvertible_checks())
+            + invalid_enum_checks() + unconvertible_checks()
+            + dangling_reference_checks())
 
 
 def run_checks(conn: Connection) -> None:
