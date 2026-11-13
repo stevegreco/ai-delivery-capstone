@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from sqlalchemy import Connection, text
 
 from delivery_assurance.db import get_engine
+from delivery_assurance.models import ALLOWED
 
 # The ID of each staging table: (label shown in reports, SQL expression).
 # release_scope has no ID column, so its key is the pair, e.g. R26.10/REQ-001.
@@ -39,6 +40,22 @@ REQUIRED = {
     "test_executions": ["execution_id", "test_case_id", "release", "executed_at", "outcome"],
     "defects": ["defect_id", "release", "severity", "status", "summary"],
     "release_scope": ["release", "requirement_id", "in_scope", "release_blocking"],
+}
+
+# Core table -> staging table, for tables whose enum columns keep their names.
+STAGING_OF = {
+    "requirement": "requirements", "acceptance_criterion": "acceptance_criteria",
+    "test_case": "test_cases", "trace_link": "traceability_links",
+    "test_execution": "test_executions", "defect": "defects",
+}
+YES_NO = {"release_scope": ["in_scope", "release_blocking"]}  # become booleans in core
+
+# Columns that must convert to a Postgres type. executed_at has no time zone in
+# the source; the loader treats it as UTC (see docs/notes/data-profile.md).
+CONVERTIBLE = {
+    ("requirements", "effective_date"): "date",
+    ("test_executions", "executed_at"): "timestamp",
+    ("test_executions", "duration_seconds"): "integer",
 }
 
 @dataclass
@@ -72,8 +89,41 @@ def missing_required_checks() -> list[Check]:
         for table, columns in REQUIRED.items() for column in columns]
 
 
+def bad_value_query(table: str, column: str, condition: str, message: str) -> str:
+    """Shared shape: non-blank values in table.column for which condition is true."""
+    return f"""
+        SELECT '{table}' AS table_name, source_row, {KEYS[table][1]} AS external_id,
+               '{column}' AS column_name, "{column}" AS value, {message} AS message
+        FROM staging."{table}"
+        WHERE coalesce(trim("{column}"), '') <> '' AND {condition}"""
+
+
+def invalid_enum_checks() -> list[Check]:
+    """Values outside the agreed list. Near misses (p0, 'APPROVED ') count too:
+    mapping source values is the adapter's job, not something core guesses."""
+    lists = [(STAGING_OF[t], col, vals) for t, cols in ALLOWED.items() if t in STAGING_OF
+             for col, vals in cols.items()]
+    lists += [(t, col, ("YES", "NO")) for t, cols in YES_NO.items() for col in cols]
+    checks = []
+    for table, column, values in lists:
+        listed = ", ".join(f"'{v}'" for v in values)
+        checks.append(Check("invalid_enum", "ERROR", bad_value_query(
+            table, column, f'"{column}" NOT IN ({listed})',
+            f"'not one of: {', '.join(values)}'")))
+    return checks
+
+
+def unconvertible_checks() -> list[Check]:
+    """Values Postgres cannot read as the core type, e.g. 2026-02-30 as a date."""
+    return [Check("unconvertible", "ERROR", bad_value_query(
+        table, column, f"""NOT pg_input_is_valid("{column}", '{pg_type}')""",
+        f"'not a valid {pg_type}'"))
+        for (table, column), pg_type in CONVERTIBLE.items()]
+
+
 def all_checks() -> list[Check]:
-    return duplicate_id_checks() + missing_required_checks()
+    return (duplicate_id_checks() + missing_required_checks()
+            + invalid_enum_checks() + unconvertible_checks())
 
 
 def run_checks(conn: Connection) -> None:

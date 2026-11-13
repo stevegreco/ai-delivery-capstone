@@ -23,10 +23,31 @@ class Base(DeclarativeBase):
     metadata = MetaData(naming_convention=NAMING)
 
 
-def allowed(column: str, *values: str) -> CheckConstraint:
-    """CHECK that a text column holds one of the agreed values (from the data profile)."""
+# The agreed values for every enum column, defined once (data profile, W2-02).
+# Used by the CHECK constraints below and by the data-quality checks.
+ALLOWED: dict[str, dict[str, tuple[str, ...]]] = {
+    "requirement": {"priority": ("P0", "P1", "P2", "P3"),
+                    "status": ("DRAFT", "REVIEW", "APPROVED"),
+                    "approval_status": ("PENDING_REVIEW", "APPROVED")},
+    "acceptance_criterion": {"status": ("DRAFT", "APPROVED")},
+    "test_case": {"status": ("ACTIVE", "NEEDS_REVIEW")},
+    "trace_link": {"link_type": ("VERIFIES",), "status": ("ACTIVE",)},
+    "test_execution": {"outcome": ("PASS", "FAIL", "NOT_RUN", "BLOCKED")},
+    "defect": {"severity": ("S1", "S2", "S3", "S4"),
+               "status": ("OPEN", "IN_PROGRESS", "FIXED", "CLOSED")},
+    "dq_issue": {"severity": ("ERROR", "WARNING")},
+}
+ORIGINS = ("HUMAN", "AI_SUGGESTED", "AI_APPROVED")
+
+
+def in_list(column: str, values: tuple[str, ...]) -> CheckConstraint:
     listed = ", ".join(f"'{v}'" for v in values)
     return CheckConstraint(f"{column} IN ({listed})", name=column)
+
+
+def allowed(table: str) -> tuple[CheckConstraint, ...]:
+    """One CHECK per enum column of a table, from ALLOWED."""
+    return tuple(in_list(col, values) for col, values in ALLOWED.get(table, {}).items())
 
 
 # --- Bookkeeping -------------------------------------------------------------
@@ -68,7 +89,7 @@ class DqIssue(Base):
     """One data-quality problem found by a check, traceable to a staging row."""
 
     __tablename__ = "dq_issue"
-    __table_args__ = (allowed("severity", "ERROR", "WARNING"),)
+    __table_args__ = allowed("dq_issue")
     id: Mapped[int] = mapped_column(primary_key=True)
     ingestion_run_id: Mapped[int] = mapped_column(ForeignKey("ingestion_run.id"))
     check_name: Mapped[str] = mapped_column(Text)
@@ -113,7 +134,7 @@ class AIOrigin:
 def ai_origin_checks() -> tuple[CheckConstraint, ...]:
     """The ADR 0002 rules: AI rows name model + prompt version; approved rows an approver."""
     return (
-        allowed("origin", "HUMAN", "AI_SUGGESTED", "AI_APPROVED"),
+        in_list("origin", ORIGINS),
         CheckConstraint("origin = 'HUMAN' OR (model IS NOT NULL AND prompt_version IS NOT NULL)",
                         name="ai_has_model"),
         CheckConstraint("origin <> 'AI_APPROVED' OR "
@@ -135,9 +156,7 @@ class Requirement(Base, Keyed, Provenance):
     __tablename__ = "requirement"
     __table_args__ = (
         UniqueConstraint("project_id", "external_id"),
-        allowed("priority", "P0", "P1", "P2", "P3"),
-        allowed("status", "DRAFT", "REVIEW", "APPROVED"),
-        allowed("approval_status", "PENDING_REVIEW", "APPROVED"),
+        *allowed("requirement"),
     )
     parent_id: Mapped[int | None] = mapped_column(ForeignKey("requirement.id"))  # epic
     domain: Mapped[str | None] = mapped_column(Text)
@@ -174,7 +193,7 @@ class AcceptanceCriterion(Base, Keyed, Provenance, AIOrigin):
     __tablename__ = "acceptance_criterion"
     __table_args__ = (
         UniqueConstraint("project_id", "external_id"),
-        allowed("status", "DRAFT", "APPROVED"),
+        *allowed("acceptance_criterion"),
         *ai_origin_checks(),
     )
     requirement_id: Mapped[int] = mapped_column(ForeignKey("requirement.id"))
@@ -187,7 +206,7 @@ class TestCase(Base, Keyed, Provenance, AIOrigin):
     __tablename__ = "test_case"
     __table_args__ = (
         UniqueConstraint("project_id", "external_id"),
-        allowed("status", "ACTIVE", "NEEDS_REVIEW"),
+        *allowed("test_case"),
         *ai_origin_checks(),
     )
     requirement_id: Mapped[int] = mapped_column(ForeignKey("requirement.id"))
@@ -207,8 +226,7 @@ class TraceLink(Base, Keyed, Provenance, AIOrigin):
     __tablename__ = "trace_link"
     __table_args__ = (
         UniqueConstraint("project_id", "external_id"),
-        allowed("link_type", "VERIFIES"),
-        allowed("status", "ACTIVE"),
+        *allowed("trace_link"),
         *ai_origin_checks(),
     )
     requirement_id: Mapped[int] = mapped_column(ForeignKey("requirement.id"))
@@ -225,7 +243,7 @@ class TestExecution(Base, Keyed, Provenance):
     __tablename__ = "test_execution"
     __table_args__ = (
         UniqueConstraint("project_id", "external_id"),
-        allowed("outcome", "PASS", "FAIL", "NOT_RUN", "BLOCKED"),
+        *allowed("test_execution"),
     )
     test_case_id: Mapped[int] = mapped_column(ForeignKey("test_case.id"))
     release_id: Mapped[int] = mapped_column(ForeignKey("release.id"))
@@ -241,8 +259,7 @@ class Defect(Base, Keyed, Provenance):
     __tablename__ = "defect"
     __table_args__ = (
         UniqueConstraint("project_id", "external_id"),
-        allowed("severity", "S1", "S2", "S3", "S4"),
-        allowed("status", "OPEN", "IN_PROGRESS", "FIXED", "CLOSED"),
+        *allowed("defect"),
     )
     test_case_id: Mapped[int | None] = mapped_column(ForeignKey("test_case.id"))
     requirement_id: Mapped[int | None] = mapped_column(ForeignKey("requirement.id"))

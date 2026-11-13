@@ -102,6 +102,10 @@ Counts in brackets.
 - `status`: `CURRENT` (7), `ARCHIVED` (1)
 - `classification`: `INTERNAL` (7), `CONFIDENTIAL` (1)
 
+## Loader assumptions
+
+- **`test_executions.executed_at` is UTC.** Values look like `2026-09-12T03:00`, with no time zone. The loader stores them as `timestamptz`, reading them as UTC.
+
 ## Oddities
 
 _Written by Steve: at least 3 things in the profile that look surprising, inconsistent or deliberately planted, and why._
