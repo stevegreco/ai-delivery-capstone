@@ -33,16 +33,44 @@ RELEASES = """
 
 # (core table, staging table, INSERT ... SELECT), in dependency order.
 STEPS = [
+    ("source_document", "document_registry", f"""
+    INSERT INTO source_document (project_id, external_id, source_file_id, source_row,
+        source_payload, file_name, document_type, domain, version, status,
+        effective_date, classification)
+    SELECT :project_id, s.document_id, s.source_file_id, s.source_row, {PAYLOAD},
+        s.file_name, nullif(s.document_type, ''), nullif(s.domain, ''),
+        nullif(s.version, ''), s.status, nullif(s.effective_date, '')::date,
+        nullif(s.classification, '')
+    FROM staging.document_registry s
+    WHERE {clean("document_registry")}
+    ORDER BY s.source_row"""),
+
+    ("api_endpoint", "api_endpoints", f"""
+    INSERT INTO api_endpoint (project_id, external_id, source_file_id, source_row,
+        source_payload, path, method, domain, purpose, response_codes, authentication,
+        idempotency_required)
+    SELECT :project_id, s.endpoint_id, s.source_file_id, s.source_row, {PAYLOAD},
+        s.path, s.method, nullif(s.domain, ''), nullif(s.purpose, ''),
+        nullif(s.response_codes, ''), nullif(s.authentication, ''),
+        nullif(s.idempotency_required, '') = 'YES'
+    FROM staging.api_endpoints s
+    WHERE {clean("api_endpoints")}
+    ORDER BY s.source_row"""),
+
+    # The document is optional (LEFT JOIN): a requirement is never dropped for it.
     ("requirement", "requirements", f"""
     INSERT INTO requirement (project_id, external_id, source_file_id, source_row,
         source_payload, domain, title, description, requirement_type, priority, status,
-        approval_status, version, effective_date, owner, source_section)
+        approval_status, version, effective_date, owner, source_document_id,
+        source_section)
     SELECT :project_id, s.requirement_id, s.source_file_id, s.source_row, {PAYLOAD},
         nullif(s.domain, ''), s.title, nullif(s.description, ''),
         nullif(s.requirement_type, ''), s.priority, s.status, s.approval_status,
         nullif(s.version, ''), nullif(s.effective_date, '')::date,
-        nullif(s.owner, ''), nullif(s.source_section, '')
+        nullif(s.owner, ''), sd.id, nullif(s.source_section, '')
     FROM staging.requirements s
+    LEFT JOIN source_document sd ON sd.project_id = :project_id
+                                AND sd.external_id = s.source_document_id
     WHERE {clean("requirements")}
     ORDER BY s.source_row"""),
 
@@ -129,22 +157,30 @@ STEPS = [
     ORDER BY s.source_row"""),
 ]
 
-# Defect references that were named in the file but emptied in core because the
-# target was kept out (a dangling target already has its own WARNING).
-DEFECT_REFS_EMPTIED = """
-    INSERT INTO dq_issue (ingestion_run_id, check_name, severity, table_name,
-                          source_row, external_id, column_name, value, message)
-    SELECT :run_id, 'reference_emptied', 'WARNING', 'defects', d.source_row,
-           d.external_id, ref.col, ref.val, 'target was kept out of core; loaded empty'
-    FROM defect d
-    CROSS JOIN LATERAL (VALUES
-        ('test_case_id', d.source_payload->>'test_case_id', d.test_case_id),
-        ('requirement_id', d.source_payload->>'requirement_id', d.requirement_id)
-    ) AS ref(col, val, core_id)
-    WHERE coalesce(ref.val, '') <> '' AND ref.core_id IS NULL
-      AND NOT EXISTS (SELECT 1 FROM dq_issue x
-                      WHERE x.ingestion_run_id = :run_id AND x.table_name = 'defects'
-                        AND x.source_row = d.source_row AND x.column_name = ref.col)"""
+# Optional references, emptied in core when their target was kept out:
+# (core table, staging table, column). A dangling target already has its own
+# WARNING; this records the other case so an emptied pointer is never silent.
+OPTIONAL_REFS = [
+    ("defect", "defects", "test_case_id"),
+    ("defect", "defects", "requirement_id"),
+    ("requirement", "requirements", "source_document_id"),
+]
+
+
+def record_refs_emptied(conn: Connection, params: dict) -> None:
+    for core, staging, column in OPTIONAL_REFS:
+        conn.execute(text(f"""
+            INSERT INTO dq_issue (ingestion_run_id, check_name, severity, table_name,
+                                  source_row, external_id, column_name, value, message)
+            SELECT :run_id, 'reference_emptied', 'WARNING', '{staging}', c.source_row,
+                   c.external_id, '{column}', c.source_payload->>'{column}',
+                   'target was kept out of core; loaded empty'
+            FROM {core} c
+            WHERE coalesce(c.source_payload->>'{column}', '') <> '' AND c.{column} IS NULL
+              AND NOT EXISTS (SELECT 1 FROM dq_issue x
+                  WHERE x.ingestion_run_id = :run_id AND x.table_name = '{staging}'
+                    AND x.source_row = c.source_row AND x.column_name = '{column}')"""),
+            params)
 
 
 def record_parent_rejected(conn: Connection, core: str, staging: str, params: dict) -> None:
@@ -170,7 +206,7 @@ def promote(conn: Connection) -> None:
     for core, staging, sql in STEPS:
         conn.execute(text(sql), params)
         record_parent_rejected(conn, core, staging, params)
-    conn.execute(text(DEFECT_REFS_EMPTIED), params)
+    record_refs_emptied(conn, params)
 
 
 def print_counts(conn: Connection) -> None:

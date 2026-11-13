@@ -36,6 +36,7 @@ ALLOWED: dict[str, dict[str, tuple[str, ...]]] = {
     "defect": {"severity": ("S1", "S2", "S3", "S4"),
                "status": ("OPEN", "IN_PROGRESS", "FIXED", "CLOSED")},
     "dq_issue": {"severity": ("ERROR", "WARNING")},
+    "source_document": {"status": ("CURRENT", "ARCHIVED")},
 }
 ORIGINS = ("HUMAN", "AI_SUGGESTED", "AI_APPROVED")
 
@@ -169,7 +170,7 @@ class Requirement(Base, Keyed, Provenance):
     version: Mapped[str | None] = mapped_column(Text)
     effective_date: Mapped[date | None] = mapped_column(Date)
     owner: Mapped[str | None] = mapped_column(Text)
-    source_document_id: Mapped[int | None]  # FK added with source_document (piece 8)
+    source_document_id: Mapped[int | None] = mapped_column(ForeignKey("source_document.id"))
     source_section: Mapped[str | None] = mapped_column(Text)
 
 
@@ -271,6 +272,35 @@ class Defect(Base, Keyed, Provenance):
     summary: Mapped[str] = mapped_column(Text)
     detected_in_build: Mapped[str | None] = mapped_column(Text)
     owner_team: Mapped[str | None] = mapped_column(Text)
+
+
+
+# --- Supporting: loaded and validated, no decision rules on them yet ---------------
+
+class SourceDocument(Base, Keyed, Provenance):
+    """A document from document_registry.csv; requirements cite it."""
+
+    __tablename__ = "source_document"
+    __table_args__ = (UniqueConstraint("project_id", "external_id"), *allowed("source_document"))
+    file_name: Mapped[str] = mapped_column(Text)
+    document_type: Mapped[str | None] = mapped_column(Text)
+    domain: Mapped[str | None] = mapped_column(Text)  # may list several, e.g. "payments,refunds"
+    version: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(Text)
+    effective_date: Mapped[date | None] = mapped_column(Date)
+    classification: Mapped[str | None] = mapped_column(Text)
+
+
+class ApiEndpoint(Base, Keyed, Provenance):
+    __tablename__ = "api_endpoint"
+    __table_args__ = (UniqueConstraint("project_id", "external_id"),)
+    path: Mapped[str] = mapped_column(Text)
+    method: Mapped[str] = mapped_column(Text)
+    domain: Mapped[str | None] = mapped_column(Text)
+    purpose: Mapped[str | None] = mapped_column(Text)
+    response_codes: Mapped[str | None] = mapped_column(Text)  # kept as text, e.g. "200,404"
+    authentication: Mapped[str | None] = mapped_column(Text)
+    idempotency_required: Mapped[bool | None]
 
 
 if __name__ == "__main__":

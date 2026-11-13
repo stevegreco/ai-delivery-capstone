@@ -40,15 +40,19 @@ REQUIRED = {
     "test_executions": ["execution_id", "test_case_id", "release", "executed_at", "outcome"],
     "defects": ["defect_id", "release", "severity", "status", "summary"],
     "release_scope": ["release", "requirement_id", "in_scope", "release_blocking"],
+    "document_registry": ["document_id", "file_name", "status"],
+    "api_endpoints": ["endpoint_id", "path", "method"],
 }
 
-# Core table -> staging table, for tables whose enum columns keep their names.
+# Core table -> staging table (enum and required columns keep their names).
 STAGING_OF = {
     "requirement": "requirements", "acceptance_criterion": "acceptance_criteria",
     "test_case": "test_cases", "trace_link": "traceability_links",
     "test_execution": "test_executions", "defect": "defects",
+    "source_document": "document_registry", "api_endpoint": "api_endpoints",
 }
-YES_NO = {"release_scope": ["in_scope", "release_blocking"]}  # become booleans in core
+YES_NO = {"release_scope": ["in_scope", "release_blocking"],  # become booleans in core
+          "api_endpoints": ["idempotency_required"]}
 
 # Columns that must convert to a Postgres type. executed_at has no time zone in
 # the source; the loader treats it as UTC (see docs/notes/data-profile.md).
@@ -56,12 +60,13 @@ CONVERTIBLE = {
     ("requirements", "effective_date"): "date",
     ("test_executions", "executed_at"): "timestamp",
     ("test_executions", "duration_seconds"): "integer",
+    ("document_registry", "effective_date"): "date",
 }
 
 # References between staging tables: (table, column, target table, target column,
 # severity). A dangling required reference keeps the row out of core (ERROR).
-# Defects are loaded anyway with the reference emptied (WARNING): dropping a
-# defect would make readiness look better than it is.
+# WARNING rows are loaded anyway with the reference emptied: dropping them would
+# make readiness look better than it is.
 REFERENCES = [
     ("acceptance_criteria", "requirement_id", "requirements", "requirement_id", "ERROR"),
     ("test_cases", "requirement_id", "requirements", "requirement_id", "ERROR"),
@@ -73,6 +78,9 @@ REFERENCES = [
     ("release_scope", "requirement_id", "requirements", "requirement_id", "ERROR"),
     ("defects", "test_case_id", "test_cases", "test_case_id", "WARNING"),
     ("defects", "requirement_id", "requirements", "requirement_id", "WARNING"),
+    # A requirement is never dropped for a bad document pointer: losing it would
+    # also lose its coverage gaps.
+    ("requirements", "source_document_id", "document_registry", "document_id", "WARNING"),
 ]
 
 # Two paths to the same requirement that should agree: (table, via column,

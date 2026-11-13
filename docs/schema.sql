@@ -65,6 +65,51 @@ CREATE TABLE source_file (
 
 ;
 
+CREATE TABLE api_endpoint (
+	path TEXT NOT NULL, 
+	method TEXT NOT NULL, 
+	domain TEXT, 
+	purpose TEXT, 
+	response_codes TEXT, 
+	authentication TEXT, 
+	idempotency_required BOOLEAN, 
+	id SERIAL NOT NULL, 
+	project_id INTEGER NOT NULL, 
+	external_id TEXT NOT NULL, 
+	source_file_id INTEGER NOT NULL, 
+	source_row INTEGER NOT NULL, 
+	source_payload JSONB NOT NULL, 
+	PRIMARY KEY (id), 
+	CONSTRAINT uq_api_endpoint_project_id_external_id UNIQUE (project_id, external_id), 
+	CONSTRAINT fk_api_endpoint_project_id FOREIGN KEY(project_id) REFERENCES project (id), 
+	CONSTRAINT fk_api_endpoint_source_file_id FOREIGN KEY(source_file_id) REFERENCES source_file (id)
+)
+
+;
+
+CREATE TABLE source_document (
+	file_name TEXT NOT NULL, 
+	document_type TEXT, 
+	domain TEXT, 
+	version TEXT, 
+	status TEXT NOT NULL, 
+	effective_date DATE, 
+	classification TEXT, 
+	id SERIAL NOT NULL, 
+	project_id INTEGER NOT NULL, 
+	external_id TEXT NOT NULL, 
+	source_file_id INTEGER NOT NULL, 
+	source_row INTEGER NOT NULL, 
+	source_payload JSONB NOT NULL, 
+	PRIMARY KEY (id), 
+	CONSTRAINT uq_source_document_project_id_external_id UNIQUE (project_id, external_id), 
+	CONSTRAINT ck_source_document_status CHECK (status IN ('CURRENT', 'ARCHIVED')), 
+	CONSTRAINT fk_source_document_project_id FOREIGN KEY(project_id) REFERENCES project (id), 
+	CONSTRAINT fk_source_document_source_file_id FOREIGN KEY(source_file_id) REFERENCES source_file (id)
+)
+
+;
+
 CREATE TABLE requirement (
 	parent_id INTEGER, 
 	domain TEXT, 
@@ -91,6 +136,7 @@ CREATE TABLE requirement (
 	CONSTRAINT ck_requirement_status CHECK (status IN ('DRAFT', 'REVIEW', 'APPROVED')), 
 	CONSTRAINT ck_requirement_approval_status CHECK (approval_status IN ('PENDING_REVIEW', 'APPROVED')), 
 	CONSTRAINT fk_requirement_parent_id FOREIGN KEY(parent_id) REFERENCES requirement (id), 
+	CONSTRAINT fk_requirement_source_document_id FOREIGN KEY(source_document_id) REFERENCES source_document (id), 
 	CONSTRAINT fk_requirement_project_id FOREIGN KEY(project_id) REFERENCES project (id), 
 	CONSTRAINT fk_requirement_source_file_id FOREIGN KEY(source_file_id) REFERENCES source_file (id)
 )
