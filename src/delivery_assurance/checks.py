@@ -29,6 +29,18 @@ KEYS = {
 }
 
 
+# Columns that are NOT NULL in core (models.py), by staging table and staging
+# column name. Keep in step with models.py; supporting tables arrive in piece 8.
+REQUIRED = {
+    "requirements": ["requirement_id", "title", "priority", "status", "approval_status"],
+    "acceptance_criteria": ["acceptance_criterion_id", "requirement_id", "criterion", "status"],
+    "test_cases": ["test_case_id", "requirement_id", "title", "status"],
+    "traceability_links": ["link_id", "requirement_id", "test_case_id", "link_type", "status"],
+    "test_executions": ["execution_id", "test_case_id", "release", "executed_at", "outcome"],
+    "defects": ["defect_id", "release", "severity", "status", "summary"],
+    "release_scope": ["release", "requirement_id", "in_scope", "release_blocking"],
+}
+
 @dataclass
 class Check:
     name: str
@@ -49,8 +61,19 @@ def duplicate_id_checks() -> list[Check]:
         WHERE n > 1""") for table, (label, key) in KEYS.items()]
 
 
+def missing_required_checks() -> list[Check]:
+    """Rows where a required column is NULL or blank ('' is how CSV shows empty)."""
+    return [Check("missing_required", "ERROR", f"""
+        SELECT '{table}' AS table_name, source_row, {KEYS[table][1]} AS external_id,
+               '{column}' AS column_name, "{column}" AS value,
+               'required field is blank' AS message
+        FROM staging."{table}"
+        WHERE coalesce(trim("{column}"), '') = ''""")
+        for table, columns in REQUIRED.items() for column in columns]
+
+
 def all_checks() -> list[Check]:
-    return duplicate_id_checks()
+    return duplicate_id_checks() + missing_required_checks()
 
 
 def run_checks(conn: Connection) -> None:
@@ -69,7 +92,7 @@ def print_summary(conn: Connection) -> None:
     rows = conn.execute(text("""
         SELECT check_name, severity, table_name, count(*) FROM dq_issue
         GROUP BY 1, 2, 3 ORDER BY 2, 1, 3""")).all()
-    print(f"{len(all_checks())} checks run; " + (f"{sum(r[3] for r in rows)} issue(s):" if rows else "no issues."))
+    print(f"{len(all_checks())} check queries run; " + (f"{sum(r[3] for r in rows)} issue(s):" if rows else "no issues."))
     for name, severity, table, n in rows:
         print(f"  {severity:<8}{name:<22}{table:<22}{n:>5}")
 
