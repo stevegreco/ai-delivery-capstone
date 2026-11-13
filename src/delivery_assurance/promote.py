@@ -1,0 +1,248 @@
+"""Promote clean rows from staging into the core tables (W2-02).
+
+Tables are copied parents-first, each with one INSERT ... SELECT. A row is
+copied only if it has no ERROR in dq_issue and its parents reached core
+(the JOINs to core tables enforce that). Every staging row ends up either
+in core or in dq_issue: rows that were clean but still missed core are
+recorded as parent_rejected.
+"""
+
+from sqlalchemy import Connection, text
+
+from delivery_assurance.checks import KEYS
+
+# The original row, minus the two bookkeeping columns, kept as JSON.
+PAYLOAD = "to_jsonb(s) - 'source_file_id' - 'source_row'"
+
+
+def clean(staging_table: str) -> str:
+    """SQL condition: staging row s has no ERROR for this run."""
+    return f"""NOT EXISTS (SELECT 1 FROM dq_issue d
+        WHERE d.ingestion_run_id = :run_id AND d.severity = 'ERROR'
+          AND d.table_name = '{staging_table}' AND d.source_row = s.source_row)"""
+
+
+RELEASES = """
+    INSERT INTO release (project_id, external_id)
+    SELECT DISTINCT :project_id, v.release FROM (
+        SELECT release FROM staging.requirements
+        UNION SELECT release FROM staging.release_scope
+        UNION SELECT release FROM staging.test_executions
+        UNION SELECT release FROM staging.defects
+        UNION SELECT target_release FROM staging.requirement_changes) v
+    WHERE coalesce(trim(v.release), '') <> ''"""
+
+# (core table, staging table, INSERT ... SELECT), in dependency order.
+STEPS = [
+    ("source_document", "document_registry", f"""
+    INSERT INTO source_document (project_id, external_id, source_file_id, source_row,
+        source_payload, file_name, document_type, domain, version, status,
+        effective_date, classification)
+    SELECT :project_id, s.document_id, s.source_file_id, s.source_row, {PAYLOAD},
+        s.file_name, nullif(s.document_type, ''), nullif(s.domain, ''),
+        nullif(s.version, ''), s.status, nullif(s.effective_date, '')::date,
+        nullif(s.classification, '')
+    FROM staging.document_registry s
+    WHERE {clean("document_registry")}
+    ORDER BY s.source_row"""),
+
+    ("api_endpoint", "api_endpoints", f"""
+    INSERT INTO api_endpoint (project_id, external_id, source_file_id, source_row,
+        source_payload, path, method, domain, purpose, response_codes, authentication,
+        idempotency_required)
+    SELECT :project_id, s.endpoint_id, s.source_file_id, s.source_row, {PAYLOAD},
+        s.path, s.method, nullif(s.domain, ''), nullif(s.purpose, ''),
+        nullif(s.response_codes, ''), nullif(s.authentication, ''),
+        nullif(s.idempotency_required, '') = 'YES'
+    FROM staging.api_endpoints s
+    WHERE {clean("api_endpoints")}
+    ORDER BY s.source_row"""),
+
+    # The document is optional (LEFT JOIN): a requirement is never dropped for it.
+    ("requirement", "requirements", f"""
+    INSERT INTO requirement (project_id, external_id, source_file_id, source_row,
+        source_payload, domain, title, description, requirement_type, priority, status,
+        approval_status, version, effective_date, owner, source_document_id,
+        source_section)
+    SELECT :project_id, s.requirement_id, s.source_file_id, s.source_row, {PAYLOAD},
+        nullif(s.domain, ''), s.title, nullif(s.description, ''),
+        nullif(s.requirement_type, ''), s.priority, s.status, s.approval_status,
+        nullif(s.version, ''), nullif(s.effective_date, '')::date,
+        nullif(s.owner, ''), sd.id, nullif(s.source_section, '')
+    FROM staging.requirements s
+    LEFT JOIN source_document sd ON sd.project_id = :project_id
+                                AND sd.external_id = s.source_document_id
+    WHERE {clean("requirements")}
+    ORDER BY s.source_row"""),
+
+    ("release_scope", "release_scope", f"""
+    INSERT INTO release_scope (release_id, requirement_id, source_file_id, source_row,
+        source_payload, in_scope, release_blocking, business_owner)
+    SELECT rl.id, r.id, s.source_file_id, s.source_row, {PAYLOAD},
+        s.in_scope = 'YES', s.release_blocking = 'YES', nullif(s.business_owner, '')
+    FROM staging.release_scope s
+    JOIN release rl ON rl.project_id = :project_id AND rl.external_id = s.release
+    JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    WHERE {clean("release_scope")}
+    ORDER BY s.source_row"""),
+
+    ("acceptance_criterion", "acceptance_criteria", f"""
+    INSERT INTO acceptance_criterion (project_id, external_id, source_file_id, source_row,
+        source_payload, requirement_id, criterion, criterion_type, status)
+    SELECT :project_id, s.acceptance_criterion_id, s.source_file_id, s.source_row, {PAYLOAD},
+        r.id, s.criterion, nullif(s.criterion_type, ''), s.status
+    FROM staging.acceptance_criteria s
+    JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    WHERE {clean("acceptance_criteria")}
+    ORDER BY s.source_row"""),
+
+    ("test_case", "test_cases", f"""
+    INSERT INTO test_case (project_id, external_id, source_file_id, source_row,
+        source_payload, requirement_id, domain, title, test_type, preconditions, steps,
+        expected_result, automation_status, status)
+    SELECT :project_id, s.test_case_id, s.source_file_id, s.source_row, {PAYLOAD},
+        r.id, nullif(s.domain, ''), s.title, nullif(s.test_type, ''),
+        nullif(s.preconditions, ''), nullif(s.steps, ''), nullif(s.expected_result, ''),
+        nullif(s.automation_status, ''), s.status
+    FROM staging.test_cases s
+    JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    WHERE {clean("test_cases")}
+    ORDER BY s.source_row"""),
+
+    # The AC is optional: blank means "no AC". A named AC that was kept out
+    # keeps the link out too, rather than loading it without its AC.
+    ("trace_link", "traceability_links", f"""
+    INSERT INTO trace_link (project_id, external_id, source_file_id, source_row,
+        source_payload, requirement_id, acceptance_criterion_id, test_case_id,
+        link_type, status)
+    SELECT :project_id, s.link_id, s.source_file_id, s.source_row, {PAYLOAD},
+        r.id, a.id, t.id, s.link_type, s.status
+    FROM staging.traceability_links s
+    JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    JOIN test_case t ON t.project_id = :project_id AND t.external_id = s.test_case_id
+    LEFT JOIN acceptance_criterion a ON a.project_id = :project_id
+                                    AND a.external_id = s.acceptance_criterion_id
+    WHERE {clean("traceability_links")}
+      AND (coalesce(s.acceptance_criterion_id, '') = '' OR a.id IS NOT NULL)
+    ORDER BY s.source_row"""),
+
+    ("test_execution", "test_executions", f"""
+    INSERT INTO test_execution (project_id, external_id, source_file_id, source_row,
+        source_payload, test_case_id, release_id, environment, executed_at, outcome,
+        duration_seconds, build_id, evidence_uri)
+    SELECT :project_id, s.execution_id, s.source_file_id, s.source_row, {PAYLOAD},
+        t.id, rl.id, nullif(s.environment, ''),
+        s.executed_at::timestamp AT TIME ZONE 'UTC',  -- source has no zone: read as UTC
+        s.outcome, nullif(s.duration_seconds, '')::int, nullif(s.build_id, ''),
+        nullif(s.evidence_uri, '')
+    FROM staging.test_executions s
+    JOIN test_case t ON t.project_id = :project_id AND t.external_id = s.test_case_id
+    JOIN release rl ON rl.project_id = :project_id AND rl.external_id = s.release
+    WHERE {clean("test_executions")}
+    ORDER BY s.source_row"""),
+
+    # Test and requirement are optional (LEFT JOIN): a defect is never dropped
+    # for a bad pointer, because that would make readiness look better.
+    ("defect", "defects", f"""
+    INSERT INTO defect (project_id, external_id, source_file_id, source_row,
+        source_payload, test_case_id, requirement_id, release_id, severity, status,
+        summary, detected_in_build, owner_team)
+    SELECT :project_id, s.defect_id, s.source_file_id, s.source_row, {PAYLOAD},
+        t.id, r.id, rl.id, s.severity, s.status, s.summary,
+        nullif(s.detected_in_build, ''), nullif(s.owner_team, '')
+    FROM staging.defects s
+    JOIN release rl ON rl.project_id = :project_id AND rl.external_id = s.release
+    LEFT JOIN test_case t ON t.project_id = :project_id AND t.external_id = s.test_case_id
+    LEFT JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    WHERE {clean("defects")}
+    ORDER BY s.source_row"""),
+
+    ("user_story", "user_stories", f"""
+    INSERT INTO user_story (project_id, external_id, source_file_id, source_row,
+        source_payload, requirement_id, story, sprint, story_points, status)
+    SELECT :project_id, s.story_id, s.source_file_id, s.source_row, {PAYLOAD},
+        r.id, s.story, nullif(s.sprint, ''), nullif(s.story_points, '')::int, s.status
+    FROM staging.user_stories s
+    JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    WHERE {clean("user_stories")}
+    ORDER BY s.source_row"""),
+
+    # The requirement is optional (LEFT JOIN): a change is never dropped for it.
+    ("requirement_change", "requirement_changes", f"""
+    INSERT INTO requirement_change (project_id, external_id, source_file_id, source_row,
+        source_payload, requirement_id, change_type, change_description, requested_date,
+        target_release_id, status, requestor)
+    SELECT :project_id, s.change_id, s.source_file_id, s.source_row, {PAYLOAD},
+        r.id, s.change_type, nullif(s.change_description, ''),
+        nullif(s.requested_date, '')::date, rl.id, s.status, nullif(s.requestor, '')
+    FROM staging.requirement_changes s
+    JOIN release rl ON rl.project_id = :project_id AND rl.external_id = s.target_release
+    LEFT JOIN requirement r ON r.project_id = :project_id
+                           AND r.external_id = s.requirement_id
+    WHERE {clean("requirement_changes")}
+    ORDER BY s.source_row"""),
+]
+
+# Optional references, emptied in core when their target was kept out:
+# (core table, staging table, column). A dangling target already has its own
+# WARNING; this records the other case so an emptied pointer is never silent.
+OPTIONAL_REFS = [
+    ("defect", "defects", "test_case_id"),
+    ("defect", "defects", "requirement_id"),
+    ("requirement", "requirements", "source_document_id"),
+    ("requirement_change", "requirement_changes", "requirement_id"),
+]
+
+
+def record_refs_emptied(conn: Connection, params: dict) -> None:
+    for core, staging, column in OPTIONAL_REFS:
+        conn.execute(text(f"""
+            INSERT INTO dq_issue (ingestion_run_id, check_name, severity, table_name,
+                                  source_row, external_id, column_name, value, message)
+            SELECT :run_id, 'reference_emptied', 'WARNING', '{staging}', c.source_row,
+                   c.external_id, '{column}', c.source_payload->>'{column}',
+                   'target was kept out of core; loaded empty'
+            FROM {core} c
+            WHERE coalesce(c.source_payload->>'{column}', '') <> '' AND c.{column} IS NULL
+              AND NOT EXISTS (SELECT 1 FROM dq_issue x
+                  WHERE x.ingestion_run_id = :run_id AND x.table_name = '{staging}'
+                    AND x.source_row = c.source_row AND x.column_name = '{column}')"""),
+            params)
+
+
+def record_parent_rejected(conn: Connection, core: str, staging: str, params: dict) -> None:
+    """Clean staging rows that did not reach core: a parent they need was kept out."""
+    conn.execute(text(f"""
+        INSERT INTO dq_issue (ingestion_run_id, check_name, severity, table_name,
+                              source_row, external_id, message)
+        SELECT :run_id, 'parent_rejected', 'ERROR', '{staging}', s.source_row,
+               {KEYS[staging][1]},
+               'a row this one refers to was kept out of core'
+        FROM staging."{staging}" s
+        WHERE {clean(staging)}
+          AND NOT EXISTS (SELECT 1 FROM {core} c WHERE c.source_file_id = s.source_file_id
+                                                   AND c.source_row = s.source_row)"""),
+        params)
+
+
+def promote(conn: Connection) -> None:
+    run_id, project_id = conn.execute(text(
+        "SELECT id, project_id FROM ingestion_run ORDER BY id DESC LIMIT 1")).one()
+    params = {"run_id": run_id, "project_id": project_id}
+    conn.execute(text(RELEASES), params)
+    for core, staging, sql in STEPS:
+        conn.execute(text(sql), params)
+        record_parent_rejected(conn, core, staging, params)
+    record_refs_emptied(conn, params)
+
+
+def print_counts(conn: Connection) -> None:
+    """Staging rows vs rows in core vs rows kept out by an ERROR."""
+    print(f"{'core table':<22}{'staging':>8}{'core':>6}{'kept out':>10}")
+    for core, staging, _ in STEPS:
+        n_stg, n_core, n_out = conn.execute(text(f"""
+            SELECT (SELECT count(*) FROM staging."{staging}"), (SELECT count(*) FROM {core}),
+                   (SELECT count(DISTINCT source_row) FROM dq_issue
+                    WHERE table_name = '{staging}' AND severity = 'ERROR')""")).one()
+        print(f"{core:<22}{n_stg:>8}{n_core:>6}{n_out:>10}")
+

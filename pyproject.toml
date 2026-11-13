@@ -1,0 +1,25 @@
+[project]
+name = "delivery-assurance"
+version = "0.1.0"
+description = "AI delivery-assurance copilot (learning capstone)"
+requires-python = ">=3.13"
+dependencies = [
+    "sqlalchemy>=2.0,<2.1",
+    "psycopg[binary]>=3.2",
+    "python-dotenv>=1.0",
+]
+
+[project.scripts]
+rebuild-db = "delivery_assurance.rebuild:main"
+
+[build-system]
+requires = ["uv_build>=0.8,<0.12"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

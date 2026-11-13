@@ -1,0 +1,15 @@
+# Local Postgres for the laptop (ADR 0001). Cloud sessions use native Postgres 16 instead.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: capstone
+      POSTGRES_PASSWORD: capstone
+      POSTGRES_DB: capstone
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
