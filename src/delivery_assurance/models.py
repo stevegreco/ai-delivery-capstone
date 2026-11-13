@@ -37,6 +37,10 @@ ALLOWED: dict[str, dict[str, tuple[str, ...]]] = {
                "status": ("OPEN", "IN_PROGRESS", "FIXED", "CLOSED")},
     "dq_issue": {"severity": ("ERROR", "WARNING")},
     "source_document": {"status": ("CURRENT", "ARCHIVED")},
+    "user_story": {"status": ("READY", "IN_TEST", "DONE")},
+    "requirement_change": {"change_type": ("NFR_CHANGE", "SECURITY_CHANGE", "RULE_CHANGE",
+                                           "SCOPE_CHANGE", "API_CHANGE"),
+                           "status": ("PROPOSED", "APPROVED", "IMPLEMENTING")},
 }
 ORIGINS = ("HUMAN", "AI_SUGGESTED", "AI_APPROVED")
 
@@ -302,6 +306,32 @@ class ApiEndpoint(Base, Keyed, Provenance):
     authentication: Mapped[str | None] = mapped_column(Text)
     idempotency_required: Mapped[bool | None]
 
+
+
+class UserStory(Base, Keyed, Provenance):
+    __tablename__ = "user_story"
+    __table_args__ = (UniqueConstraint("project_id", "external_id"), *allowed("user_story"))
+    requirement_id: Mapped[int] = mapped_column(ForeignKey("requirement.id"))
+    story: Mapped[str] = mapped_column(Text)
+    sprint: Mapped[str | None] = mapped_column(Text)
+    story_points: Mapped[int | None]
+    status: Mapped[str] = mapped_column(Text)
+
+
+class RequirementChange(Base, Keyed, Provenance):
+    """A change request against a requirement. The requirement is optional so a
+    change is never dropped (hidden changes would hide stale tests, W6)."""
+
+    __tablename__ = "requirement_change"
+    __table_args__ = (UniqueConstraint("project_id", "external_id"),
+                      *allowed("requirement_change"))
+    requirement_id: Mapped[int | None] = mapped_column(ForeignKey("requirement.id"))
+    change_type: Mapped[str] = mapped_column(Text)
+    change_description: Mapped[str | None] = mapped_column(Text)
+    requested_date: Mapped[date | None] = mapped_column(Date)
+    target_release_id: Mapped[int] = mapped_column(ForeignKey("release.id"))
+    status: Mapped[str] = mapped_column(Text)
+    requestor: Mapped[str | None] = mapped_column(Text)
 
 if __name__ == "__main__":
     # Print the schema as Postgres DDL: `uv run python -m delivery_assurance.models`

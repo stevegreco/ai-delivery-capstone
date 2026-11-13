@@ -73,7 +73,8 @@ def test_required_matches_not_null_columns():
     staging_to_core = {v: k for k, v in STAGING_OF.items()} | {"release_scope": "release_scope"}
     for staging, required in REQUIRED.items():
         table = models.Base.metadata.tables[staging_to_core[staging]]
-        rename = {"external_id": KEYS[staging][1], "release_id": "release"}
+        rename = {"external_id": KEYS[staging][1], "release_id": "release",
+                  "target_release_id": "target_release"}
         not_null = {rename.get(c.name, c.name) for c in table.columns
                     if not c.nullable and c.name not in bookkeeping}
         assert set(required) == not_null, staging

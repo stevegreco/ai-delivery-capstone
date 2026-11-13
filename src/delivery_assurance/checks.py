@@ -42,6 +42,8 @@ REQUIRED = {
     "release_scope": ["release", "requirement_id", "in_scope", "release_blocking"],
     "document_registry": ["document_id", "file_name", "status"],
     "api_endpoints": ["endpoint_id", "path", "method"],
+    "user_stories": ["story_id", "requirement_id", "story", "status"],
+    "requirement_changes": ["change_id", "change_type", "target_release", "status"],
 }
 
 # Core table -> staging table (enum and required columns keep their names).
@@ -50,6 +52,7 @@ STAGING_OF = {
     "test_case": "test_cases", "trace_link": "traceability_links",
     "test_execution": "test_executions", "defect": "defects",
     "source_document": "document_registry", "api_endpoint": "api_endpoints",
+    "user_story": "user_stories", "requirement_change": "requirement_changes",
 }
 YES_NO = {"release_scope": ["in_scope", "release_blocking"],  # become booleans in core
           "api_endpoints": ["idempotency_required"]}
@@ -61,6 +64,8 @@ CONVERTIBLE = {
     ("test_executions", "executed_at"): "timestamp",
     ("test_executions", "duration_seconds"): "integer",
     ("document_registry", "effective_date"): "date",
+    ("user_stories", "story_points"): "integer",
+    ("requirement_changes", "requested_date"): "date",
 }
 
 # References between staging tables: (table, column, target table, target column,
@@ -81,6 +86,9 @@ REFERENCES = [
     # A requirement is never dropped for a bad document pointer: losing it would
     # also lose its coverage gaps.
     ("requirements", "source_document_id", "document_registry", "document_id", "WARNING"),
+    ("user_stories", "requirement_id", "requirements", "requirement_id", "ERROR"),
+    # A change is never dropped: hidden changes would hide stale tests (W6).
+    ("requirement_changes", "requirement_id", "requirements", "requirement_id", "WARNING"),
 ]
 
 # Two paths to the same requirement that should agree: (table, via column,

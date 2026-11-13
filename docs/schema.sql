@@ -194,6 +194,32 @@ CREATE TABLE release_scope (
 
 ;
 
+CREATE TABLE requirement_change (
+	requirement_id INTEGER, 
+	change_type TEXT NOT NULL, 
+	change_description TEXT, 
+	requested_date DATE, 
+	target_release_id INTEGER NOT NULL, 
+	status TEXT NOT NULL, 
+	requestor TEXT, 
+	id SERIAL NOT NULL, 
+	project_id INTEGER NOT NULL, 
+	external_id TEXT NOT NULL, 
+	source_file_id INTEGER NOT NULL, 
+	source_row INTEGER NOT NULL, 
+	source_payload JSONB NOT NULL, 
+	PRIMARY KEY (id), 
+	CONSTRAINT uq_requirement_change_project_id_external_id UNIQUE (project_id, external_id), 
+	CONSTRAINT ck_requirement_change_change_type CHECK (change_type IN ('NFR_CHANGE', 'SECURITY_CHANGE', 'RULE_CHANGE', 'SCOPE_CHANGE', 'API_CHANGE')), 
+	CONSTRAINT ck_requirement_change_status CHECK (status IN ('PROPOSED', 'APPROVED', 'IMPLEMENTING')), 
+	CONSTRAINT fk_requirement_change_requirement_id FOREIGN KEY(requirement_id) REFERENCES requirement (id), 
+	CONSTRAINT fk_requirement_change_target_release_id FOREIGN KEY(target_release_id) REFERENCES release (id), 
+	CONSTRAINT fk_requirement_change_project_id FOREIGN KEY(project_id) REFERENCES project (id), 
+	CONSTRAINT fk_requirement_change_source_file_id FOREIGN KEY(source_file_id) REFERENCES source_file (id)
+)
+
+;
+
 CREATE TABLE test_case (
 	requirement_id INTEGER NOT NULL, 
 	domain TEXT, 
@@ -226,6 +252,28 @@ CREATE TABLE test_case (
 	CONSTRAINT fk_test_case_requirement_id FOREIGN KEY(requirement_id) REFERENCES requirement (id), 
 	CONSTRAINT fk_test_case_project_id FOREIGN KEY(project_id) REFERENCES project (id), 
 	CONSTRAINT fk_test_case_source_file_id FOREIGN KEY(source_file_id) REFERENCES source_file (id)
+)
+
+;
+
+CREATE TABLE user_story (
+	requirement_id INTEGER NOT NULL, 
+	story TEXT NOT NULL, 
+	sprint TEXT, 
+	story_points INTEGER, 
+	status TEXT NOT NULL, 
+	id SERIAL NOT NULL, 
+	project_id INTEGER NOT NULL, 
+	external_id TEXT NOT NULL, 
+	source_file_id INTEGER NOT NULL, 
+	source_row INTEGER NOT NULL, 
+	source_payload JSONB NOT NULL, 
+	PRIMARY KEY (id), 
+	CONSTRAINT uq_user_story_project_id_external_id UNIQUE (project_id, external_id), 
+	CONSTRAINT ck_user_story_status CHECK (status IN ('READY', 'IN_TEST', 'DONE')), 
+	CONSTRAINT fk_user_story_requirement_id FOREIGN KEY(requirement_id) REFERENCES requirement (id), 
+	CONSTRAINT fk_user_story_project_id FOREIGN KEY(project_id) REFERENCES project (id), 
+	CONSTRAINT fk_user_story_source_file_id FOREIGN KEY(source_file_id) REFERENCES source_file (id)
 )
 
 ;

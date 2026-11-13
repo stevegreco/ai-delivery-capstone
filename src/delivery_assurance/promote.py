@@ -28,7 +28,8 @@ RELEASES = """
         SELECT release FROM staging.requirements
         UNION SELECT release FROM staging.release_scope
         UNION SELECT release FROM staging.test_executions
-        UNION SELECT release FROM staging.defects) v
+        UNION SELECT release FROM staging.defects
+        UNION SELECT target_release FROM staging.requirement_changes) v
     WHERE coalesce(trim(v.release), '') <> ''"""
 
 # (core table, staging table, INSERT ... SELECT), in dependency order.
@@ -155,6 +156,31 @@ STEPS = [
     LEFT JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
     WHERE {clean("defects")}
     ORDER BY s.source_row"""),
+
+    ("user_story", "user_stories", f"""
+    INSERT INTO user_story (project_id, external_id, source_file_id, source_row,
+        source_payload, requirement_id, story, sprint, story_points, status)
+    SELECT :project_id, s.story_id, s.source_file_id, s.source_row, {PAYLOAD},
+        r.id, s.story, nullif(s.sprint, ''), nullif(s.story_points, '')::int, s.status
+    FROM staging.user_stories s
+    JOIN requirement r ON r.project_id = :project_id AND r.external_id = s.requirement_id
+    WHERE {clean("user_stories")}
+    ORDER BY s.source_row"""),
+
+    # The requirement is optional (LEFT JOIN): a change is never dropped for it.
+    ("requirement_change", "requirement_changes", f"""
+    INSERT INTO requirement_change (project_id, external_id, source_file_id, source_row,
+        source_payload, requirement_id, change_type, change_description, requested_date,
+        target_release_id, status, requestor)
+    SELECT :project_id, s.change_id, s.source_file_id, s.source_row, {PAYLOAD},
+        r.id, s.change_type, nullif(s.change_description, ''),
+        nullif(s.requested_date, '')::date, rl.id, s.status, nullif(s.requestor, '')
+    FROM staging.requirement_changes s
+    JOIN release rl ON rl.project_id = :project_id AND rl.external_id = s.target_release
+    LEFT JOIN requirement r ON r.project_id = :project_id
+                           AND r.external_id = s.requirement_id
+    WHERE {clean("requirement_changes")}
+    ORDER BY s.source_row"""),
 ]
 
 # Optional references, emptied in core when their target was kept out:
@@ -164,6 +190,7 @@ OPTIONAL_REFS = [
     ("defect", "defects", "test_case_id"),
     ("defect", "defects", "requirement_id"),
     ("requirement", "requirements", "source_document_id"),
+    ("requirement_change", "requirement_changes", "requirement_id"),
 ]
 
 
