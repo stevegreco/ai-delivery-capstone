@@ -13,5 +13,13 @@ dependencies = [
 rebuild-db = "delivery_assurance.rebuild:main"
 
 [build-system]
-requires = ["uv_build>=0.8,<0.10"]
+requires = ["uv_build>=0.8,<0.12"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

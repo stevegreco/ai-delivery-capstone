@@ -203,6 +203,7 @@ class AcceptanceCriterion(Base, Keyed, Provenance, AIOrigin):
 
 
 class TestCase(Base, Keyed, Provenance, AIOrigin):
+    __test__ = False  # not a pytest test class, despite the name
     __tablename__ = "test_case"
     __table_args__ = (
         UniqueConstraint("project_id", "external_id"),
@@ -240,6 +241,7 @@ class TraceLink(Base, Keyed, Provenance, AIOrigin):
 # --- Core: evidence --------------------------------------------------------------
 
 class TestExecution(Base, Keyed, Provenance):
+    __test__ = False  # not a pytest test class, despite the name
     __tablename__ = "test_execution"
     __table_args__ = (
         UniqueConstraint("project_id", "external_id"),
