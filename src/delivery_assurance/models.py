@@ -63,6 +63,23 @@ class SourceFile(Base):
     row_count: Mapped[int]
 
 
+
+class DqIssue(Base):
+    """One data-quality problem found by a check, traceable to a staging row."""
+
+    __tablename__ = "dq_issue"
+    __table_args__ = (allowed("severity", "ERROR", "WARNING"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    ingestion_run_id: Mapped[int] = mapped_column(ForeignKey("ingestion_run.id"))
+    check_name: Mapped[str] = mapped_column(Text)
+    severity: Mapped[str] = mapped_column(Text)  # ERROR: row kept out of core
+    table_name: Mapped[str] = mapped_column(Text)  # staging table (= CSV file name)
+    source_row: Mapped[int | None]
+    external_id: Mapped[str | None] = mapped_column(Text)
+    column_name: Mapped[str | None] = mapped_column(Text)
+    value: Mapped[str | None] = mapped_column(Text)
+    message: Mapped[str] = mapped_column(Text)
+
 # --- Shared column sets (mixins) ---------------------------------------------
 
 class Keyed:
@@ -94,10 +111,11 @@ class AIOrigin:
 
 
 def ai_origin_checks() -> tuple[CheckConstraint, ...]:
-    """The ADR 0002 rules: AI rows name their model; approved rows name an approver."""
+    """The ADR 0002 rules: AI rows name model + prompt version; approved rows an approver."""
     return (
         allowed("origin", "HUMAN", "AI_SUGGESTED", "AI_APPROVED"),
-        CheckConstraint("origin = 'HUMAN' OR model IS NOT NULL", name="ai_has_model"),
+        CheckConstraint("origin = 'HUMAN' OR (model IS NOT NULL AND prompt_version IS NOT NULL)",
+                        name="ai_has_model"),
         CheckConstraint("origin <> 'AI_APPROVED' OR "
                         "(approved_by IS NOT NULL AND approved_at IS NOT NULL)",
                         name="approved_has_approver"),

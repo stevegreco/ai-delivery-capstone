@@ -35,6 +35,24 @@ CREATE TABLE release (
 
 ;
 
+CREATE TABLE dq_issue (
+	id SERIAL NOT NULL, 
+	ingestion_run_id INTEGER NOT NULL, 
+	check_name TEXT NOT NULL, 
+	severity TEXT NOT NULL, 
+	table_name TEXT NOT NULL, 
+	source_row INTEGER, 
+	external_id TEXT, 
+	column_name TEXT, 
+	value TEXT, 
+	message TEXT NOT NULL, 
+	PRIMARY KEY (id), 
+	CONSTRAINT ck_dq_issue_severity CHECK (severity IN ('ERROR', 'WARNING')), 
+	CONSTRAINT fk_dq_issue_ingestion_run_id FOREIGN KEY(ingestion_run_id) REFERENCES ingestion_run (id)
+)
+
+;
+
 CREATE TABLE source_file (
 	id SERIAL NOT NULL, 
 	ingestion_run_id INTEGER NOT NULL, 
@@ -101,7 +119,7 @@ CREATE TABLE acceptance_criterion (
 	CONSTRAINT uq_acceptance_criterion_project_id_external_id UNIQUE (project_id, external_id), 
 	CONSTRAINT ck_acceptance_criterion_status CHECK (status IN ('DRAFT', 'APPROVED')), 
 	CONSTRAINT ck_acceptance_criterion_origin CHECK (origin IN ('HUMAN', 'AI_SUGGESTED', 'AI_APPROVED')), 
-	CONSTRAINT ck_acceptance_criterion_ai_has_model CHECK (origin = 'HUMAN' OR model IS NOT NULL), 
+	CONSTRAINT ck_acceptance_criterion_ai_has_model CHECK (origin = 'HUMAN' OR (model IS NOT NULL AND prompt_version IS NOT NULL)), 
 	CONSTRAINT ck_acceptance_criterion_approved_has_approver CHECK (origin <> 'AI_APPROVED' OR (approved_by IS NOT NULL AND approved_at IS NOT NULL)), 
 	CONSTRAINT fk_acceptance_criterion_requirement_id FOREIGN KEY(requirement_id) REFERENCES requirement (id), 
 	CONSTRAINT fk_acceptance_criterion_project_id FOREIGN KEY(project_id) REFERENCES project (id), 
@@ -157,7 +175,7 @@ CREATE TABLE test_case (
 	CONSTRAINT uq_test_case_project_id_external_id UNIQUE (project_id, external_id), 
 	CONSTRAINT ck_test_case_status CHECK (status IN ('ACTIVE', 'NEEDS_REVIEW')), 
 	CONSTRAINT ck_test_case_origin CHECK (origin IN ('HUMAN', 'AI_SUGGESTED', 'AI_APPROVED')), 
-	CONSTRAINT ck_test_case_ai_has_model CHECK (origin = 'HUMAN' OR model IS NOT NULL), 
+	CONSTRAINT ck_test_case_ai_has_model CHECK (origin = 'HUMAN' OR (model IS NOT NULL AND prompt_version IS NOT NULL)), 
 	CONSTRAINT ck_test_case_approved_has_approver CHECK (origin <> 'AI_APPROVED' OR (approved_by IS NOT NULL AND approved_at IS NOT NULL)), 
 	CONSTRAINT fk_test_case_requirement_id FOREIGN KEY(requirement_id) REFERENCES requirement (id), 
 	CONSTRAINT fk_test_case_project_id FOREIGN KEY(project_id) REFERENCES project (id), 
@@ -244,7 +262,7 @@ CREATE TABLE trace_link (
 	CONSTRAINT ck_trace_link_link_type CHECK (link_type IN ('VERIFIES')), 
 	CONSTRAINT ck_trace_link_status CHECK (status IN ('ACTIVE')), 
 	CONSTRAINT ck_trace_link_origin CHECK (origin IN ('HUMAN', 'AI_SUGGESTED', 'AI_APPROVED')), 
-	CONSTRAINT ck_trace_link_ai_has_model CHECK (origin = 'HUMAN' OR model IS NOT NULL), 
+	CONSTRAINT ck_trace_link_ai_has_model CHECK (origin = 'HUMAN' OR (model IS NOT NULL AND prompt_version IS NOT NULL)), 
 	CONSTRAINT ck_trace_link_approved_has_approver CHECK (origin <> 'AI_APPROVED' OR (approved_by IS NOT NULL AND approved_at IS NOT NULL)), 
 	CONSTRAINT fk_trace_link_requirement_id FOREIGN KEY(requirement_id) REFERENCES requirement (id), 
 	CONSTRAINT fk_trace_link_acceptance_criterion_id FOREIGN KEY(acceptance_criterion_id) REFERENCES acceptance_criterion (id), 
