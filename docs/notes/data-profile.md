@@ -102,6 +102,14 @@ Counts in brackets.
 - `status`: `CURRENT` (7), `ARCHIVED` (1)
 - `classification`: `INTERNAL` (7), `CONFIDENTIAL` (1)
 
+## Data-quality result
+
+`uv run rebuild-db` on 2026-11-13, loader version 0.1.0:
+
+- **70 check queries, 0 issues.** No duplicate IDs, blank required fields, invalid enum values, unconvertible values, dangling references or requirement mismatches.
+- **Every row reached core:** 135 requirements, 135 release-scope rows, 421 ACs, 183 tests, 183 links, 569 executions and 114 defects.
+- So the reference CSVs are structurally clean. Each check was proven against planted bad rows (see the W2-02 commits). The dataset's deliberate problems are coverage problems for W2-03, not data-quality problems.
+
 ## Loader assumptions
 
 - **`test_executions.executed_at` is UTC.** Values look like `2026-09-12T03:00`, with no time zone. The loader stores them as `timestamptz`, reading them as UTC.
