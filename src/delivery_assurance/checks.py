@@ -75,6 +75,17 @@ REFERENCES = [
     ("defects", "requirement_id", "requirements", "requirement_id", "WARNING"),
 ]
 
+# Two paths to the same requirement that should agree: (table, via column,
+# other table, other key). E.g. a link's requirement_id should match the
+# requirement_id of the test it links. Both rows are valid on their own, so
+# disagreement is reported, not rejected (ADR 0002).
+CONSISTENCY = [
+    ("traceability_links", "test_case_id", "test_cases", "test_case_id"),
+    ("traceability_links", "acceptance_criterion_id", "acceptance_criteria",
+     "acceptance_criterion_id"),
+    ("defects", "test_case_id", "test_cases", "test_case_id"),
+]
+
 @dataclass
 class Check:
     name: str
@@ -151,10 +162,22 @@ def dangling_reference_checks() -> list[Check]:
     return checks
 
 
+def requirement_mismatch_checks() -> list[Check]:
+    """Rows whose requirement_id differs from the one reached through another row."""
+    return [Check("requirement_mismatch", "WARNING", f"""
+        SELECT '{table}' AS table_name, s.source_row, s.{KEYS[table][1]} AS external_id,
+               'requirement_id' AS column_name, s.requirement_id AS value,
+               '{other}.' || o.{other_key} || ' belongs to ' || o.requirement_id AS message
+        FROM staging."{table}" s
+        JOIN staging."{other}" o ON o."{other_key}" = s."{via}"
+        WHERE s.requirement_id <> o.requirement_id""")
+        for table, via, other, other_key in CONSISTENCY]
+
+
 def all_checks() -> list[Check]:
     return (duplicate_id_checks() + missing_required_checks()
             + invalid_enum_checks() + unconvertible_checks()
-            + dangling_reference_checks())
+            + dangling_reference_checks() + requirement_mismatch_checks())
 
 
 def run_checks(conn: Connection) -> None:
